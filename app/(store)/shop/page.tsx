@@ -1,0 +1,150 @@
+import { Suspense } from 'react'
+import { supabase } from '@/lib/supabase'
+import { Product } from '@/lib/types'
+import ProductCard from '@/components/product/ProductCard'
+import FilterSidebar from '@/components/shop/FilterSidebar'
+import SortBar from '@/components/shop/SortBar'
+
+interface ShopPageProps {
+  searchParams: Promise<{
+    category?: string
+    brand?: string
+    minPrice?: string
+    maxPrice?: string
+    instock?: string
+    sort?: string
+    featured?: string
+    sale?: string
+    q?: string
+    page?: string
+  }>
+}
+
+async function getProducts(params: Awaited<ShopPageProps['searchParams']>) {
+  let query = supabase
+    .from('products')
+    .select('*, category:categories(id,name,slug), brand:brands(id,name,slug)', { count: 'exact' })
+
+  if (params.q) query = query.ilike('name', `%${params.q}%`)
+  if (params.category) query = query.eq('categories.slug', params.category)
+  if (params.brand) query = query.eq('brands.slug', params.brand)
+  if (params.minPrice) query = query.gte('price', Number(params.minPrice))
+  if (params.maxPrice) query = query.lte('price', Number(params.maxPrice))
+  if (params.instock === 'true') query = query.eq('stock_status', 'instock')
+  if (params.featured === 'true') query = query.eq('featured', true)
+  if (params.sale === 'true') query = query.not('sale_price', 'is', null)
+
+  const sort = params.sort || 'newest'
+  if (sort === 'price_asc') query = query.order('price', { ascending: true })
+  else if (sort === 'price_desc') query = query.order('price', { ascending: false })
+  else if (sort === 'rating') query = query.order('rating', { ascending: false })
+  else query = query.order('created_at', { ascending: false })
+
+  const page = Number(params.page || 1)
+  const perPage = 24
+  query = query.range((page - 1) * perPage, page * perPage - 1)
+
+  const { data, error, count } = await query
+  return { products: (data as Product[]) || [], total: count || 0, page, perPage }
+}
+
+function getPageTitle(params: Awaited<ShopPageProps['searchParams']>) {
+  if (params.q) return `Search: "${params.q}"`
+  if (params.featured === 'true') return 'Featured Products'
+  if (params.sale === 'true') return 'Hot Deals'
+  if (params.category) return params.category.charAt(0).toUpperCase() + params.category.slice(1)
+  if (params.brand) return params.brand.charAt(0).toUpperCase() + params.brand.slice(1)
+  return 'All Products'
+}
+
+async function ShopContent({ searchParams }: { searchParams: Awaited<ShopPageProps['searchParams']> }) {
+  const { products, total, page, perPage } = await getProducts(searchParams)
+  const totalPages = Math.ceil(total / perPage)
+  const title = getPageTitle(searchParams)
+
+  return (
+    <div className="flex-1 min-w-0">
+      <div className="mb-2">
+        <h1 className="text-xl font-black text-[#021523]">{title}</h1>
+      </div>
+      <Suspense fallback={<div className="h-12 bg-[#f2f3f5] rounded animate-pulse mb-4" />}>
+        <SortBar total={total} />
+      </Suspense>
+      {products.length === 0 ? (
+        <div className="text-center py-16">
+          <div className="text-5xl mb-4">🔍</div>
+          <h2 className="text-xl font-bold text-[#021523] mb-2">No products found</h2>
+          <p className="text-[#818ea0]">Try adjusting your filters or search terms.</p>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+          {totalPages > 1 && (
+            <div className="flex justify-center gap-2 mt-8">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <a
+                  key={p}
+                  href={`/shop?${new URLSearchParams({ ...searchParams, page: String(p) }).toString()}`}
+                  className={`w-9 h-9 flex items-center justify-center rounded-md text-sm font-semibold transition-colors ${
+                    p === page ? 'bg-[#041e42] text-white' : 'border border-[#e5e8ec] text-[#021523] hover:border-[#041e42]'
+                  }`}
+                >
+                  {p}
+                </a>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  )
+}
+
+export default async function ShopPage({ searchParams }: ShopPageProps) {
+  const params = await searchParams
+  const [{ data: categories }, { data: brands }] = await Promise.all([
+    supabase.from('categories').select('name, slug').order('name'),
+    supabase.from('brands').select('name, slug').order('name'),
+  ])
+
+  return (
+    <div className="max-w-[1290px] mx-auto px-4 py-6">
+      <div className="text-xs text-[#818ea0] mb-4">
+        <a href="/" className="hover:text-[#041e42]">Home</a>{' / '}
+        <span className="text-[#021523]">Shop</span>
+      </div>
+      <div className="flex gap-6">
+        <aside className="hidden lg:block w-60 flex-shrink-0">
+          <Suspense fallback={<div className="h-96 bg-[#f2f3f5] rounded animate-pulse" />}>
+            <FilterSidebar categories={categories ?? []} brands={brands ?? []} />
+          </Suspense>
+        </aside>
+        <Suspense
+          fallback={
+            <div className="flex-1">
+              <div className="h-12 bg-[#f2f3f5] rounded animate-pulse mb-4" />
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <div key={i} className="bg-white border border-[#e5e8ec] rounded-lg overflow-hidden animate-pulse">
+                    <div className="aspect-square bg-[#f2f3f5]" />
+                    <div className="p-3 space-y-2">
+                      <div className="h-4 bg-[#f2f3f5] rounded" />
+                      <div className="h-4 bg-[#f2f3f5] rounded w-2/3" />
+                      <div className="h-8 bg-[#f2f3f5] rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          }
+        >
+          <ShopContent searchParams={params} />
+        </Suspense>
+      </div>
+    </div>
+  )
+}
