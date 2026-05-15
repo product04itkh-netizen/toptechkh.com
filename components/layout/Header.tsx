@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import {
   Search, Menu, X,
@@ -11,15 +11,15 @@ import {
 import { supabase } from '@/lib/supabase'
 
 const departments = [
-  { name: 'Laptop',           slug: 'laptop',          Icon: Laptop },
-  { name: 'PC',               slug: 'pc',              Icon: Monitor },
-  { name: 'Components',       slug: 'components',      Icon: Cpu },
-  { name: 'LCD Monitor',      slug: 'lcd-monitor',     Icon: Monitor },
-  { name: 'Peripherals',      slug: 'peripherals',     Icon: Mouse },
-  { name: 'Accessories',      slug: 'accessories',     Icon: Package },
-  { name: 'Printer & Scanner',slug: 'printer-scanner', Icon: Printer },
-  { name: 'Speaker',          slug: 'speaker',         Icon: Volume2 },
-  { name: 'Network',          slug: 'network',         Icon: Wifi },
+  { name: 'Laptop',            slug: 'laptop',          Icon: Laptop },
+  { name: 'PC',                slug: 'pc',              Icon: Monitor },
+  { name: 'Components',        slug: 'components',      Icon: Cpu },
+  { name: 'LCD Monitor',       slug: 'lcd-monitor',     Icon: Monitor },
+  { name: 'Peripherals',       slug: 'peripherals',     Icon: Mouse },
+  { name: 'Accessories',       slug: 'accessories',     Icon: Package },
+  { name: 'Printer & Scanner', slug: 'printer-scanner', Icon: Printer },
+  { name: 'Speaker',           slug: 'speaker',         Icon: Volume2 },
+  { name: 'Network',           slug: 'network',         Icon: Wifi },
 ]
 
 const navTabs = [
@@ -34,6 +34,9 @@ type Brand = { id: number; name: string; slug: string }
 
 export default function Header() {
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   const [query, setQuery] = useState('')
   const [searchCat, setSearchCat] = useState('')
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -41,21 +44,36 @@ export default function Header() {
   const [brandOpen, setBrandOpen] = useState(false)
   const brandRef = useRef<HTMLDivElement>(null)
 
+  // Active state based on current URL
+  const isShop = pathname === '/shop'
+  const activeCategory = isShop ? searchParams.get('category') : null
+  const activeBrand = isShop ? searchParams.get('brand') : null
+
+  // Close mobile menu and brand dropdown on navigation
   useEffect(() => {
-    supabase
-      .from('products')
-      .select('brand_id')
-      .not('brand_id', 'is', null)
-      .then(({ data: rows }) => {
-        const ids = [...new Set((rows ?? []).map((r) => r.brand_id))]
-        if (!ids.length) return
-        supabase
-          .from('brands')
-          .select('id, name, slug')
-          .in('id', ids)
-          .order('name')
-          .then(({ data }) => setBrands(data ?? []))
-      })
+    setMobileOpen(false)
+    setBrandOpen(false)
+  }, [pathname, searchParams])
+
+  useEffect(() => {
+    async function loadBrands() {
+      const { data: rows } = await supabase
+        .from('products')
+        .select('brand_id')
+        .not('brand_id', 'is', null)
+
+      const ids = [...new Set((rows ?? []).map((r) => r.brand_id as number))]
+      if (!ids.length) return
+
+      const { data } = await supabase
+        .from('brands')
+        .select('id, name, slug')
+        .in('id', ids)
+        .order('name')
+
+      setBrands(data ?? [])
+    }
+    loadBrands()
   }, [])
 
   useEffect(() => {
@@ -81,7 +99,7 @@ export default function Header() {
       <div className="max-w-[1400px] mx-auto px-4 flex items-center gap-4 h-[68px]">
 
         {/* Logo */}
-        <Link href="/" className="flex-shrink-0 flex items-center gap-2.5 cursor-pointer hover:opacity-85 transition-opacity">
+        <Link href="/" className="flex-shrink-0 flex items-center gap-2.5 hover:opacity-85 transition-opacity">
           <Image
             src="/top-tech-logo.png"
             alt="Top Tech Computer"
@@ -96,24 +114,21 @@ export default function Header() {
           </div>
         </Link>
 
-        {/* Search bar with department select */}
+        {/* Search bar */}
         <form
           onSubmit={handleSearch}
           className="hidden sm:flex items-stretch border border-[#c8cdd5] rounded-md overflow-hidden focus-within:border-[#041e42] transition-colors flex-1 min-w-0 max-w-[520px] h-10 ml-4"
         >
-          {/* Department select */}
           <select
             value={searchCat}
             onChange={(e) => setSearchCat(e.target.value)}
-            className="border-r border-[#c8cdd5] bg-[#f5f6f8] text-[#333] text-xs px-2 py-0 outline-none cursor-pointer flex-shrink-0 max-w-[130px]"
+            className="border-r border-[#c8cdd5] bg-[#f5f6f8] text-[#333] text-xs px-2 outline-none cursor-pointer flex-shrink-0 max-w-[130px]"
           >
             <option value="">All</option>
             {departments.map((d) => (
               <option key={d.slug} value={d.slug}>{d.name}</option>
             ))}
           </select>
-
-          {/* Text input */}
           <input
             type="text"
             value={query}
@@ -121,11 +136,9 @@ export default function Header() {
             placeholder="Search products..."
             className="flex-1 px-3 text-sm outline-none text-[#021523] bg-white min-w-0"
           />
-
-          {/* Submit button */}
           <button
             type="submit"
-            className="bg-[#041e42] hover:bg-[#0a3060] text-white px-4 flex items-center gap-1.5 transition-colors text-sm font-medium flex-shrink-0"
+            className="bg-[#041e42] hover:bg-[#0a3060] text-white px-4 flex items-center transition-colors flex-shrink-0"
           >
             <Search size={14} />
           </button>
@@ -133,22 +146,29 @@ export default function Header() {
 
         {/* Category nav tabs */}
         <nav className="hidden sm:flex items-center flex-shrink-0 gap-1.5">
-          {navTabs.map((tab) => (
-            <Link
-              key={tab.slug}
-              href={`/shop?category=${tab.slug}`}
-              className="flex items-center px-3 py-1.5 text-sm text-[#333] hover:text-white font-medium whitespace-nowrap bg-[#f2f3f5] hover:bg-[#041e42] border border-[#e5e8ec] hover:border-[#041e42] rounded-full transition-all duration-150"
-            >
-              {tab.name}
-            </Link>
-          ))}
+          {navTabs.map((tab) => {
+            const isActive = activeCategory === tab.slug
+            return (
+              <Link
+                key={tab.slug}
+                href={`/shop?category=${tab.slug}`}
+                className={`flex items-center px-3 py-1.5 text-sm font-medium whitespace-nowrap border rounded-full transition-all duration-150 ${
+                  isActive
+                    ? 'bg-[#041e42] text-white border-[#041e42]'
+                    : 'text-[#333] bg-[#f2f3f5] hover:bg-[#041e42] hover:text-white border-[#e5e8ec] hover:border-[#041e42]'
+                }`}
+              >
+                {tab.name}
+              </Link>
+            )
+          })}
 
           {/* Brands dropdown */}
           <div ref={brandRef} className="relative flex items-center">
             <button
               onClick={() => setBrandOpen((o) => !o)}
               className={`flex items-center gap-1 px-3 py-1.5 text-sm font-medium whitespace-nowrap border rounded-full transition-all duration-150 ${
-                brandOpen
+                brandOpen || activeBrand
                   ? 'bg-[#041e42] text-white border-[#041e42]'
                   : 'text-[#333] bg-[#f2f3f5] border-[#e5e8ec] hover:bg-[#041e42] hover:text-white hover:border-[#041e42]'
               }`}
@@ -162,8 +182,11 @@ export default function Header() {
                   <Link
                     key={brand.slug}
                     href={`/shop?brand=${brand.slug}`}
-                    onClick={() => setBrandOpen(false)}
-                    className="block px-4 py-2 text-sm text-[#021523] hover:bg-[#f5f6f8] hover:text-[#041e42] font-medium transition-colors"
+                    className={`block px-4 py-2 text-sm font-medium transition-colors ${
+                      activeBrand === brand.slug
+                        ? 'bg-[#041e42] text-white'
+                        : 'text-[#021523] hover:bg-[#f5f6f8] hover:text-[#041e42]'
+                    }`}
                   >
                     {brand.name}
                   </Link>
@@ -212,8 +235,9 @@ export default function Header() {
                 <li key={dept.slug}>
                   <Link
                     href={`/shop?category=${dept.slug}`}
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-3 py-2.5 px-2 text-sm text-[#021523] font-medium border-b border-[#f2f3f5]"
+                    className={`flex items-center gap-3 py-2.5 px-2 text-sm font-medium border-b border-[#f2f3f5] ${
+                      activeCategory === dept.slug ? 'text-[#041e42]' : 'text-[#021523]'
+                    }`}
                   >
                     <dept.Icon size={15} className="text-[#818ea0]" />
                     {dept.name}
@@ -228,8 +252,9 @@ export default function Header() {
                       <Link
                         key={brand.slug}
                         href={`/shop?brand=${brand.slug}`}
-                        onClick={() => setMobileOpen(false)}
-                        className="py-2 px-2 text-sm text-[#021523] font-medium border-b border-[#f2f3f5]"
+                        className={`py-2 px-2 text-sm font-medium border-b border-[#f2f3f5] ${
+                          activeBrand === brand.slug ? 'text-[#041e42]' : 'text-[#021523]'
+                        }`}
                       >
                         {brand.name}
                       </Link>
@@ -240,7 +265,6 @@ export default function Header() {
               <li>
                 <Link
                   href="/shop?sale=true"
-                  onClick={() => setMobileOpen(false)}
                   className="flex items-center gap-3 py-2.5 px-2 text-sm text-[#ef262c] font-bold"
                 >
                   <Tag size={15} /> Promotion

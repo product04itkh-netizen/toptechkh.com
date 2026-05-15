@@ -21,13 +21,30 @@ interface ShopPageProps {
 }
 
 async function getProducts(params: Awaited<ShopPageProps['searchParams']>) {
+  // Resolve slug → id for accurate filtering (can't filter aliased joined columns directly)
+  let categoryId: number | null = null
+  let categoryName: string | null = null
+  let brandId: number | null = null
+  let brandName: string | null = null
+
+  await Promise.all([
+    params.category
+      ? supabase.from('categories').select('id, name').eq('slug', params.category).single()
+          .then(({ data }) => { if (data) { categoryId = data.id; categoryName = data.name } })
+      : Promise.resolve(),
+    params.brand
+      ? supabase.from('brands').select('id, name').eq('slug', params.brand).single()
+          .then(({ data }) => { if (data) { brandId = data.id; brandName = data.name } })
+      : Promise.resolve(),
+  ])
+
   let query = supabase
     .from('products')
     .select('*, category:categories(id,name,slug), brand:brands(id,name,slug)', { count: 'exact' })
 
   if (params.q) query = query.ilike('name', `%${params.q}%`)
-  if (params.category) query = query.eq('categories.slug', params.category)
-  if (params.brand) query = query.eq('brands.slug', params.brand)
+  if (categoryId !== null) query = query.eq('category_id', categoryId)
+  if (brandId !== null) query = query.eq('brand_id', brandId)
   if (params.minPrice) query = query.gte('price', Number(params.minPrice))
   if (params.maxPrice) query = query.lte('price', Number(params.maxPrice))
   if (params.instock === 'true') query = query.eq('stock_status', 'instock')
@@ -40,27 +57,31 @@ async function getProducts(params: Awaited<ShopPageProps['searchParams']>) {
   else if (sort === 'rating') query = query.order('rating', { ascending: false })
   else query = query.order('created_at', { ascending: false })
 
-  const page = Number(params.page || 1)
+  const page = Math.max(1, Number(params.page || 1))
   const perPage = 24
   query = query.range((page - 1) * perPage, page * perPage - 1)
 
-  const { data, error, count } = await query
-  return { products: (data as Product[]) || [], total: count || 0, page, perPage }
+  const { data, count } = await query
+  return { products: (data as Product[]) || [], total: count || 0, page, perPage, categoryName, brandName }
 }
 
-function getPageTitle(params: Awaited<ShopPageProps['searchParams']>) {
+function getPageTitle(
+  params: Awaited<ShopPageProps['searchParams']>,
+  categoryName: string | null,
+  brandName: string | null,
+) {
   if (params.q) return `Search: "${params.q}"`
   if (params.featured === 'true') return 'Featured Products'
   if (params.sale === 'true') return 'Hot Deals'
-  if (params.category) return params.category.charAt(0).toUpperCase() + params.category.slice(1)
-  if (params.brand) return params.brand.charAt(0).toUpperCase() + params.brand.slice(1)
+  if (params.category) return categoryName ?? params.category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  if (params.brand) return brandName ?? params.brand.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
   return 'All Products'
 }
 
 async function ShopContent({ searchParams }: { searchParams: Awaited<ShopPageProps['searchParams']> }) {
-  const { products, total, page, perPage } = await getProducts(searchParams)
+  const { products, total, page, perPage, categoryName, brandName } = await getProducts(searchParams)
   const totalPages = Math.ceil(total / perPage)
-  const title = getPageTitle(searchParams)
+  const title = getPageTitle(searchParams, categoryName, brandName)
 
   return (
     <div className="flex-1 min-w-0">
