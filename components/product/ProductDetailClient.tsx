@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { ShieldCheck, Truck, RotateCcw, ChevronLeft, ChevronRight, Copy, Check, Send } from 'lucide-react'
 import { Product } from '@/lib/types'
-import StarRating from '@/components/ui/StarRating'
 import Badge from '@/components/ui/Badge'
 
 interface ProductDetailClientProps {
@@ -105,10 +104,11 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
         <h1 className="text-2xl font-black text-[#021523] leading-tight mb-3">{product.name}</h1>
 
-        <div className="flex items-center gap-3 mb-4">
-          <StarRating rating={product.rating ?? 0} count={product.review_count ?? 0} size="md" />
-          {product.sku && <span className="text-xs text-[#818ea0]">SKU: {product.sku}</span>}
-        </div>
+        {product.sku && (
+          <div className="mb-4">
+            <span className="text-xs text-[#818ea0]">SKU: {product.sku}</span>
+          </div>
+        )}
 
         {/* Price */}
         <div className="flex items-baseline gap-3 mb-6 pb-6 border-b border-[#e5e8ec]">
