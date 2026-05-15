@@ -5,7 +5,7 @@ import { useActionState } from 'react'
 const inputCls = 'w-full px-3 py-2.5 border border-[#e5e8ec] rounded-lg text-sm outline-none focus:border-[#041e42]'
 
 export default function CategoryEditForm({ category, action }: { category: any; action: any }) {
-  const [state, formAction, pending] = useActionState(action, null)
+  const [state, formAction, pending] = useActionState(action, null as { error?: string } | null)
 
   return (
     <div className="p-6">
