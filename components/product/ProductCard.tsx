@@ -27,7 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     ? Math.round(((product.price - product.sale_price) / product.price) * 100)
     : 0
   const displayPrice = product.sale_price ?? product.price
-  const imageUrl = '/top-tech-logo.png'
+  const imageUrl = product.images?.find((u) => u.includes('supabase')) ?? null
   const bullets = extractBullets(product.excerpt)
   const outOfStock = product.stock_status === 'outofstock'
 
@@ -44,16 +44,22 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Image */}
       <Link href={`/product/${product.slug}`} className="block">
         <div className="relative aspect-[4/3] bg-[#f5f6f8] overflow-hidden">
-          <Image
-            src={imageUrl}
-            alt={product.name}
-            fill
-            className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            onError={(e) => {
-              ;(e.target as HTMLImageElement).src = '/top-tech-logo.png'
-            }}
-          />
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt={product.name}
+              fill
+              className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-[#d1d9e0]">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+          )}
         </div>
       </Link>
 

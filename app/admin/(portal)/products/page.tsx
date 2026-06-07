@@ -20,7 +20,7 @@ export default async function AdminProductsPage({ searchParams }: Props) {
     .order('created_at', { ascending: false })
     .range(offset, offset + perPage - 1)
 
-  if (q) query = (query as any).ilike('name', `%${q}%`)
+  if (q) query = (query as any).or(`name.ilike.%${q}%,sku.ilike.%${q}%`)
 
   const { data: products, count } = await query
   const totalPages = Math.ceil((count ?? 0) / perPage)
@@ -39,10 +39,15 @@ export default async function AdminProductsPage({ searchParams }: Props) {
       </div>
 
       <form className="mb-4">
-        <div className="relative max-w-xs">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#818ea0]" />
-          <input type="text" name="q" defaultValue={q} placeholder="Search products…"
-            className="w-full pl-9 pr-3 py-2.5 border border-[#e5e8ec] rounded-lg text-sm outline-none focus:border-[#041e42]" />
+        <div className="flex items-center gap-2 max-w-sm">
+          <div className="relative flex-1">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#818ea0]" />
+            <input type="text" name="q" defaultValue={q} placeholder="Search by name or SKU…"
+              className="w-full pl-9 pr-3 py-2.5 border border-[#e5e8ec] rounded-lg text-sm outline-none focus:border-[#041e42]" />
+          </div>
+          <button type="submit" className="bg-[#041e42] hover:bg-[#0a3060] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+            Search
+          </button>
         </div>
       </form>
 

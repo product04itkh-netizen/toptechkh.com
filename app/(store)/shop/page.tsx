@@ -4,6 +4,7 @@ import { Product } from '@/lib/types'
 import ProductCard from '@/components/product/ProductCard'
 import FilterSidebar from '@/components/shop/FilterSidebar'
 import SortBar from '@/components/shop/SortBar'
+import CategoryLanding from '@/components/shop/CategoryLanding'
 
 interface ShopPageProps {
   searchParams: Promise<{
@@ -125,8 +126,71 @@ async function ShopContent({ searchParams }: { searchParams: Awaited<ShopPagePro
   )
 }
 
+async function getCategoryLandingData(slug: string) {
+  const { data: category } = await supabase
+    .from('categories')
+    .select('id, name, slug, image_url, description')
+    .eq('slug', slug)
+    .single()
+
+  if (!category) return null
+
+  const [{ data: products }, { data: bannerRows }] = await Promise.all([
+    supabase
+      .from('products')
+      .select('*, category:categories(id,name,slug), brand:brands(id,name,slug,logo_url)')
+      .eq('category_id', category.id)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('brand_category_banners')
+      .select('brand_id, banner_url')
+      .eq('category_id', category.id),
+  ])
+
+  // brand_id → per-category banner URL
+  const brandBanners: Record<number, string> = {}
+  for (const row of (bannerRows ?? [])) {
+    brandBanners[row.brand_id] = row.banner_url
+  }
+
+  const brandMap = new Map<string, { brand: any; products: Product[] }>()
+  for (const product of (products ?? []) as Product[]) {
+    const key = (product as any).brand?.slug ?? '__no_brand'
+    if (!brandMap.has(key)) brandMap.set(key, { brand: (product as any).brand ?? null, products: [] })
+    brandMap.get(key)!.products.push(product)
+  }
+
+  const brandGroups = [...brandMap.values()].sort((a, b) => b.products.length - a.products.length)
+  return { category, brandGroups, total: products?.length ?? 0, brandBanners }
+}
+
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams
+
+  // Category landing — no extra filters applied
+  const isCategoryLanding = params.category && !params.brand && !params.q && !params.featured && !params.sale && !params.minPrice
+
+  if (isCategoryLanding) {
+    const data = await getCategoryLandingData(params.category!)
+    if (data) {
+      return (
+        <div className="max-w-[1290px] mx-auto px-4 py-6">
+          <div className="text-xs text-[#818ea0] mb-6">
+            <a href="/" className="hover:text-[#041e42]">Home</a>{' / '}
+            <a href="/shop" className="hover:text-[#041e42]">Shop</a>{' / '}
+            <span className="text-[#021523]">{data.category.name}</span>
+          </div>
+          <CategoryLanding
+            category={data.category}
+            brandGroups={data.brandGroups}
+            totalProducts={data.total}
+            brandBanners={data.brandBanners}
+          />
+        </div>
+      )
+    }
+  }
+
   const [{ data: categories }, { data: brands }] = await Promise.all([
     supabase.from('categories').select('name, slug').order('name'),
     supabase.from('brands').select('name, slug').order('name'),
@@ -139,7 +203,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         <span className="text-[#021523]">Shop</span>
       </div>
       <div className="flex gap-6">
-        <aside className="hidden lg:block w-60 flex-shrink-0">
+        <aside className="hidden lg:block flex-shrink-0">
           <Suspense fallback={<div className="h-96 bg-[#f2f3f5] rounded animate-pulse" />}>
             <FilterSidebar categories={categories ?? []} brands={brands ?? []} />
           </Suspense>

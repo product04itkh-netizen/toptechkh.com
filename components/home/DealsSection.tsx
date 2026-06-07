@@ -26,7 +26,7 @@ export default async function DealsSection() {
         <div className="bg-gradient-to-r from-[#ef262c] to-[#c71f24] rounded-xl p-6 md:p-8 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-white text-center md:text-left">
             <p className="text-sm font-semibold uppercase tracking-wider text-red-200 mb-1">Limited Time Offer</p>
-            <h2 className="text-2xl md:text-3xl font-black">Hot Deals of the Week</h2>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black">Hot Deals of the Week</h2>
             <p className="text-red-200 mt-1">Up to 50% off on selected items</p>
           </div>
           <Link

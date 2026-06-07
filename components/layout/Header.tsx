@@ -6,7 +6,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import {
   Search, Menu, X,
-  Laptop, Monitor, Cpu, Mouse, Package, Printer, Volume2, Wifi, Tag, ChevronDown,
+  Laptop, Monitor, Cpu, Mouse, Package, Printer, Volume2, Wifi, Tag, ChevronDown, Wrench,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
@@ -163,6 +163,19 @@ export default function Header() {
             )
           })}
 
+          {/* Build PC */}
+          <Link
+            href="/build-pc"
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium whitespace-nowrap border rounded-full transition-all duration-150 ${
+              pathname === '/build-pc'
+                ? 'bg-[#041e42] text-white border-[#041e42]'
+                : 'text-[#333] bg-[#f2f3f5] border-[#e5e8ec] hover:bg-[#041e42] hover:text-white hover:border-[#041e42]'
+            }`}
+          >
+            <Wrench size={13} />
+            Build PC
+          </Link>
+
           {/* Brands dropdown */}
           <div ref={brandRef} className="relative flex items-center">
             <button
@@ -262,6 +275,14 @@ export default function Header() {
                   </div>
                 </li>
               )}
+              <li>
+                <Link
+                  href="/build-pc"
+                  className="flex items-center gap-3 py-2.5 px-2 text-sm font-bold text-[#041e42]"
+                >
+                  <Wrench size={15} /> Build PC
+                </Link>
+              </li>
               <li>
                 <Link
                   href="/shop?sale=true"

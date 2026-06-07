@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Package, Tag, Building2, LogOut, ChevronRight } from 'lucide-react'
+import { LayoutDashboard, Package, Tag, Building2, LogOut, ChevronRight, GalleryHorizontal } from 'lucide-react'
 import { logoutAction } from '@/app/admin/login/actions'
 
 const navItems = [
@@ -11,6 +11,7 @@ const navItems = [
   { href: '/admin/products', label: 'Products', icon: Package },
   { href: '/admin/categories', label: 'Categories', icon: Tag },
   { href: '/admin/brands', label: 'Brands', icon: Building2 },
+  { href: '/admin/banners', label: 'Banners', icon: GalleryHorizontal },
 ]
 
 export default function AdminSidebar() {

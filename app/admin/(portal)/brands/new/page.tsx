@@ -2,8 +2,10 @@
 
 import { useActionState } from 'react'
 import { createBrand } from '../actions'
+import ImageUpload from '@/components/admin/ImageUpload'
 
 const inputCls = 'w-full px-3 py-2.5 border border-[#e5e8ec] rounded-lg text-sm outline-none focus:border-[#041e42]'
+const labelCls = 'block text-sm font-medium text-[#021523] mb-1.5'
 
 export default function NewBrandPage() {
   const [state, action, pending] = useActionState(createBrand, null)
@@ -16,16 +18,23 @@ export default function NewBrandPage() {
         </div>
         <h1 className="text-2xl font-black text-[#021523]">Add Brand</h1>
       </div>
-      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6 max-w-sm">
+      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6 max-w-lg">
         <form action={action} className="space-y-4">
           {state?.error && <div className="text-sm text-[#ef262c] bg-red-50 border border-red-100 rounded-lg px-4 py-3">{state.error}</div>}
           <div>
-            <label className="block text-sm font-medium text-[#021523] mb-1.5">Name *</label>
+            <label className={labelCls}>Name *</label>
             <input type="text" name="name" required className={inputCls} placeholder="e.g. ASUS" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#021523] mb-1.5">Slug *</label>
+            <label className={labelCls}>Slug *</label>
             <input type="text" name="slug" required className={inputCls} placeholder="e.g. asus" />
+          </div>
+          <div>
+            <label className={labelCls}>
+              Brand Banner
+              <span className="text-[#818ea0] font-normal text-xs ml-2">Shown in category brand sections</span>
+            </label>
+            <ImageUpload name="logo_url" />
           </div>
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={pending}

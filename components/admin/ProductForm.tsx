@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react'
 import RichTextEditor from './RichTextEditor'
+import ImageUpload from './ImageUpload'
 
 interface Category { id: number; name: string }
 interface Brand { id: number; name: string }
@@ -107,10 +108,8 @@ export default function ProductForm({ action, categories, brands, defaultValues 
         {/* Right */}
         <div className="space-y-4">
           <div>
-            <label className={labelCls}>Image URLs <span className="text-[#818ea0] font-normal text-xs">(one per line)</span></label>
-            <textarea name="images" defaultValue={defaultValues.images?.join('\n')} rows={4}
-              className="w-full px-3 py-2.5 border border-[#e5e8ec] rounded-lg text-sm outline-none focus:border-[#041e42] font-mono resize-none"
-              placeholder="https://example.com/image1.jpg" />
+            <label className={labelCls}>Product Images</label>
+            <ImageUpload defaultImages={defaultValues.images ?? []} />
           </div>
 
           <div>

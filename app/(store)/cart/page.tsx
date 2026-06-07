@@ -38,7 +38,16 @@ export default function CartPage() {
               <div key={product.id} className="bg-white border border-[#e5e8ec] rounded-lg p-4 flex gap-4">
                 <Link href={`/product/${product.slug}`} className="flex-shrink-0">
                   <div className="relative w-20 h-20 bg-[#f2f3f5] rounded-lg overflow-hidden">
-                    <Image src="/top-tech-logo.png" alt={product.name} fill className="object-contain p-2" />
+                    {product.images?.find((u) => u.includes('supabase')) ? (
+                      <Image src={product.images.find((u) => u.includes('supabase'))!} alt={product.name} fill className="object-contain p-2" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[#d1d9e0]">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                          <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                      </div>
+                    )}
                   </div>
                 </Link>
                 <div className="flex-1 min-w-0">

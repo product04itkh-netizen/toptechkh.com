@@ -1,11 +1,14 @@
 'use client'
 
 import { useActionState } from 'react'
+import ImageUpload from '@/components/admin/ImageUpload'
 
 const inputCls = 'w-full px-3 py-2.5 border border-[#e5e8ec] rounded-lg text-sm outline-none focus:border-[#041e42]'
+const labelCls = 'block text-sm font-medium text-[#021523] mb-1.5'
 
 export default function BrandEditForm({ brand, action }: { brand: any; action: any }) {
   const [state, formAction, pending] = useActionState(action, null as { error?: string } | null)
+  const existingLogo = brand.logo_url?.includes('supabase') ? [brand.logo_url] : []
 
   return (
     <div className="p-6">
@@ -15,17 +18,24 @@ export default function BrandEditForm({ brand, action }: { brand: any; action: a
         </div>
         <h1 className="text-2xl font-black text-[#021523]">Edit Brand</h1>
       </div>
-      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6 max-w-sm">
+      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6 max-w-lg">
         <form action={formAction} className="space-y-4">
           <input type="hidden" name="id" value={brand.id} />
           {state?.error && <div className="text-sm text-[#ef262c] bg-red-50 border border-red-100 rounded-lg px-4 py-3">{state.error}</div>}
           <div>
-            <label className="block text-sm font-medium text-[#021523] mb-1.5">Name *</label>
+            <label className={labelCls}>Name *</label>
             <input type="text" name="name" defaultValue={brand.name} required className={inputCls} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#021523] mb-1.5">Slug *</label>
+            <label className={labelCls}>Slug *</label>
             <input type="text" name="slug" defaultValue={brand.slug} required className={inputCls} />
+          </div>
+          <div>
+            <label className={labelCls}>
+              Brand Banner
+              <span className="text-[#818ea0] font-normal text-xs ml-2">Shown in category brand sections</span>
+            </label>
+            <ImageUpload name="logo_url" defaultImages={existingLogo} />
           </div>
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={pending}

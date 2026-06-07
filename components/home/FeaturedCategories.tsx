@@ -34,7 +34,7 @@ export default async function FeaturedCategories() {
       <div className="max-w-[1290px] mx-auto px-4">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-black text-[#021523]">Shop by Category</h2>
+            <h2 className="text-xl sm:text-2xl font-black text-[#021523]">Shop by Category</h2>
             <p className="text-sm text-[#818ea0] mt-1">Find what you need in our full lineup</p>
           </div>
           <Link href="/shop" className="text-sm font-semibold text-[#0070dc] hover:text-[#041e42] transition-colors">
