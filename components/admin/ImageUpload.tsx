@@ -11,7 +11,7 @@ interface ImageUploadProps {
 
 export default function ImageUpload({ defaultImages = [], name = 'images' }: ImageUploadProps) {
   const [images, setImages] = useState<string[]>(
-    defaultImages.filter((url) => url.includes('supabase'))
+    defaultImages.filter(Boolean)
   )
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
