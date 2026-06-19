@@ -28,11 +28,20 @@ export default function ProductCard({ product }: ProductCardProps) {
     : 0
   const displayPrice = product.sale_price ?? product.price
 
-  // Handle images as string (JSON) or array
-  const imageArray = typeof product.images === 'string'
-    ? JSON.parse(product.images ?? '[]').filter(Boolean)
-    : (product.images ?? []).filter(Boolean)
-  const imageUrl = Array.isArray(imageArray) && imageArray.length > 0 ? imageArray[0] : null
+  // Handle images - can be string (JSON), array, or null
+  let images: string[] = []
+  if (product.images) {
+    if (typeof product.images === 'string') {
+      try {
+        images = JSON.parse(product.images).filter(Boolean)
+      } catch {
+        images = []
+      }
+    } else if (Array.isArray(product.images)) {
+      images = product.images.filter(Boolean)
+    }
+  }
+  const imageUrl = images.length > 0 ? images[0] : null
 
   const bullets = extractBullets(product.excerpt)
   const outOfStock = product.stock_status === 'outofstock'

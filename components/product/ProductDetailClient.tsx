@@ -30,11 +30,19 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(product.name)}`, '_blank')
   }
 
-  // Handle images as string (JSON) or array
-  const imageArray = typeof product.images === 'string'
-    ? JSON.parse(product.images ?? '[]').filter(Boolean)
-    : (product.images ?? []).filter(Boolean)
-  const images = Array.isArray(imageArray) ? imageArray : []
+  // Handle images - can be string (JSON), array, or null
+  let images: string[] = []
+  if (product.images) {
+    if (typeof product.images === 'string') {
+      try {
+        images = JSON.parse(product.images).filter(Boolean)
+      } catch {
+        images = []
+      }
+    } else if (Array.isArray(product.images)) {
+      images = product.images.filter(Boolean)
+    }
+  }
 
   useEffect(() => {
     if (images.length <= 1 || paused) return
