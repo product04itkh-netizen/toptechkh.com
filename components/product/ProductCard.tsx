@@ -1,7 +1,6 @@
 ﻿'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { Product } from '@/lib/types'
 import { useCartStore } from '@/lib/cart-store'
 import Badge from '@/components/ui/Badge'
@@ -60,12 +59,12 @@ export default function ProductCard({ product }: ProductCardProps) {
       <Link href={`/product/${product.slug}`} className="block">
         <div className="relative aspect-[4/3] bg-[#f5f6f8] overflow-hidden">
           {imageUrl ? (
-            <Image
+            <img
               src={imageUrl}
               alt={product.name}
-              fill
-              className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+              decoding="async"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-[#d1d9e0]">
