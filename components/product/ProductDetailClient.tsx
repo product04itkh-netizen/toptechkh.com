@@ -99,6 +99,8 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                   fill
                   className="object-contain p-3 sm:p-6 transition-transform duration-300 group-hover:scale-[1.03]"
                   priority
+                  onError={(e) => console.error('Image load error:', images[activeImage], e)}
+                  unoptimized={false}
                 />
                 {images.length > 1 && (
                   <span className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white text-[11px] font-medium px-2 py-0.5 rounded-full pointer-events-none">
