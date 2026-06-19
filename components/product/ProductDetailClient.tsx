@@ -30,7 +30,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(product.name)}`, '_blank')
   }
 
-  const images = (product.images ?? []).filter((u) => u.includes('supabase'))
+  const images = (product.images ?? []).filter(Boolean)
 
   useEffect(() => {
     if (images.length <= 1 || paused) return

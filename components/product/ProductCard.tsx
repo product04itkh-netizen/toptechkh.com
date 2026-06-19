@@ -27,7 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     ? Math.round(((product.price - product.sale_price) / product.price) * 100)
     : 0
   const displayPrice = product.sale_price ?? product.price
-  const imageUrl = product.images?.find((u) => u.includes('supabase')) ?? null
+  const imageUrl = (Array.isArray(product.images) && product.images.length > 0) ? product.images[0] : null
   const bullets = extractBullets(product.excerpt)
   const outOfStock = product.stock_status === 'outofstock'
 
