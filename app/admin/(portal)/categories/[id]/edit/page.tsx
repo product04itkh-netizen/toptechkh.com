@@ -7,12 +7,13 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
   const { id } = await params
   const catId = parseInt(id)
 
-  const { data: category } = await supabaseAdmin
+  const { data: category, error } = await supabaseAdmin
     .from('categories')
     .select('*')
     .eq('id', catId)
-    .single()
+    .maybeSingle()
 
+  if (error) console.error('Category fetch error:', error)
   if (!category) notFound()
 
   // Brands that have products in this category

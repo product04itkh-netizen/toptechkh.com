@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
@@ -114,7 +114,7 @@ export default function HeroBannerCarousel({ slides }: { slides: BannerSlide[] }
       </div>
 
       {/* Telegram order strip */}
-      <div className="mt-3 sm:mt-4 bg-[#041e42] border-t border-white/10">
+      <div className="mt-3 sm:mt-4 bg-[var(--cms-color-primary)] border-t border-white/10">
         <div className="max-w-[1290px] mx-auto px-4 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-y-1 gap-x-3">
           <div className="flex items-center gap-2 text-xs text-[#b0bec5] flex-wrap">
             <Send size={11} className="text-[#ffbd27] flex-shrink-0" />

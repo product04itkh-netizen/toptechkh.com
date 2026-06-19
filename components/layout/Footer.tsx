@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import Image from 'next/image'
 import { Phone, Mail, MapPin, Send } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
@@ -44,7 +44,7 @@ export default async function Footer() {
                 { label: 'Telegram', href: 'https://t.me/top_techcomputer' },
               ].map(({ label, href }) => (
                 <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-                  className="text-[11px] text-[#818ea0] hover:text-[#ffbd27] border border-[#0a3060] px-2 py-1 rounded transition-colors">
+                  className="text-[11px] text-[#818ea0] hover:text-[#ffbd27] border border-[var(--cms-color-primary-hover)] px-2 py-1 rounded transition-colors">
                   {label}
                 </a>
               ))}

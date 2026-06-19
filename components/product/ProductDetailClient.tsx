@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
@@ -66,11 +66,11 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 onClick={() => goTo(idx)}
                 className={`relative w-[68px] h-[68px] rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all duration-150 ${
                   activeImage === idx
-                    ? 'border-[#041e42] shadow-sm'
+                    ? 'border-[var(--cms-color-primary)] shadow-sm'
                     : 'border-[#e5e8ec] hover:border-[#9aacbe]'
                 }`}
               >
-                <Image src={img} alt="" fill className="object-contain p-1.5" />
+                <Image src={img} alt={`${product.name} image ${idx + 1}`} fill className="object-contain p-1.5" />
               </button>
             ))}
           </div>
@@ -129,7 +129,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                   key={idx}
                   onClick={() => goTo(idx)}
                   className={`w-2 h-2 rounded-full transition-all ${
-                    activeImage === idx ? 'bg-[#041e42] w-4' : 'bg-[#c5ccd5]'
+                    activeImage === idx ? 'bg-[var(--cms-color-primary)] w-4' : 'bg-[#c5ccd5]'
                   }`}
                 />
               ))}
@@ -172,7 +172,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             <span className="text-lg text-[#818ea0] line-through">${product.price.toFixed(2)}</span>
           )}
           {discount > 0 && (
-            <span className="text-sm font-bold text-[#ef262c]">Save {discount}%</span>
+            <span className="text-sm font-bold text-[var(--cms-color-accent)]">Save {discount}%</span>
           )}
         </div>
 
@@ -219,7 +219,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             { icon: RotateCcw, label: 'Easy Returns', sub: '30-day return' },
           ].map(({ icon: Icon, label, sub }) => (
             <div key={label} className="flex flex-col items-center text-center gap-1 p-2 sm:p-3 bg-[#f2f3f5] rounded-lg">
-              <Icon size={18} className="text-[#041e42]" />
+              <Icon size={18} className="text-[var(--cms-color-primary)]" />
               <span className="text-[10px] sm:text-xs font-bold text-[#021523]">{label}</span>
               <span className="text-[9px] sm:text-[10px] text-[#818ea0] leading-tight">{sub}</span>
             </div>

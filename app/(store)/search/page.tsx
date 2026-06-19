@@ -9,12 +9,13 @@ interface SearchPageProps {
 
 async function searchProducts(query: string, category?: string): Promise<Product[]> {
   if (!query.trim()) return []
+  const limit = parseInt(process.env.NEXT_PUBLIC_SEARCH_RESULT_LIMIT || '24')
   let q = supabase
     .from('products')
     .select('*, category:categories(id,name,slug), brand:brands(id,name,slug)')
     .ilike('name', `%${query}%`)
     .order('created_at', { ascending: false })
-    .limit(24)
+    .limit(limit)
   if (category) q = q.eq('categories.slug', category)
   const { data } = await q
   return (data as Product[]) || []

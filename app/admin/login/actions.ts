@@ -17,11 +17,12 @@ export async function loginAction(_: unknown, formData: FormData) {
   }
 
   const cookieStore = await cookies()
+  const sessionHours = parseInt(process.env.NEXT_PUBLIC_SESSION_TIMEOUT_HOURS || '8')
   cookieStore.set('admin_session', data.session.access_token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 60 * 60 * 8,
+    maxAge: 60 * 60 * sessionHours,
     path: '/',
   })
 

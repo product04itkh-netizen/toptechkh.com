@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
 const brandEmoji: Record<string, string> = {
@@ -41,7 +41,7 @@ export default async function BrandStrip() {
       <div className="max-w-[1290px] mx-auto px-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-bold text-[#818ea0] uppercase tracking-wider">Top Brands</h3>
-          <Link href="/shop" className="text-xs text-[#0070dc] hover:text-[#041e42]">
+          <Link href="/shop" className="text-xs text-[#0070dc] hover:text-[var(--cms-color-primary)]">
             View all brands →
           </Link>
         </div>
@@ -51,7 +51,7 @@ export default async function BrandStrip() {
             <Link
               key={brand.slug}
               href={`/shop?brand=${brand.slug}`}
-              className="flex flex-col items-center gap-1.5 p-3 bg-white border border-[#e5e8ec] rounded-lg hover:border-[#041e42] hover:shadow-sm transition-all group"
+              className="flex flex-col items-center gap-1.5 p-3 bg-white border border-[#e5e8ec] rounded-lg hover:border-[var(--cms-color-primary)] hover:shadow-sm transition-all group"
             >
               <span className="text-2xl group-hover:scale-110 transition-transform">
                 {brandEmoji[brand.slug] ?? '🏷️'}

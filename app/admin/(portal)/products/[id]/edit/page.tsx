@@ -8,12 +8,23 @@ interface Props { params: Promise<{ id: string }> }
 export default async function EditProductPage({ params }: Props) {
   const { id } = await params
 
-  const [{ data: product }, { data: categories }, { data: brands }] = await Promise.all([
-    supabaseAdmin.from('products').select('*').eq('id', parseInt(id)).single(),
+  const [
+    { data: product, error: productError },
+    { data: categories },
+    { data: brands },
+    { data: allSeries },
+    { data: allSubcategories },
+    { data: allSubSubcategories },
+  ] = await Promise.all([
+    supabaseAdmin.from('products').select('*').eq('id', parseInt(id)).maybeSingle(),
     supabaseAdmin.from('categories').select('id, name').order('name'),
     supabaseAdmin.from('brands').select('id, name').order('name'),
+    supabaseAdmin.from('series').select('id, name, brand_id').order('name'),
+    supabaseAdmin.from('subcategories').select('id, name, category_id').order('name'),
+    supabaseAdmin.from('sub_subcategories').select('id, name, subcategory_id').order('name'),
   ])
 
+  if (productError) console.error('Product fetch error:', productError)
   if (!product) notFound()
 
   return (
@@ -26,7 +37,15 @@ export default async function EditProductPage({ params }: Props) {
         <p className="text-sm text-[#818ea0] mt-0.5 truncate">{product.name}</p>
       </div>
       <div className="bg-white rounded-xl border border-[#e5e8ec] p-6">
-        <ProductForm action={updateProduct} categories={categories ?? []} brands={brands ?? []} defaultValues={product} />
+        <ProductForm
+          action={updateProduct}
+          categories={categories ?? []}
+          brands={brands ?? []}
+          allSeries={allSeries ?? []}
+          allSubcategories={allSubcategories ?? []}
+          allSubSubcategories={allSubSubcategories ?? []}
+          defaultValues={product}
+        />
       </div>
     </div>
   )

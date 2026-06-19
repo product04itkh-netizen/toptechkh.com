@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { Product } from '@/lib/types'
 import ProductCard from '@/components/product/ProductCard'
@@ -29,7 +29,7 @@ export default async function FeaturedProducts() {
             <h2 className="text-xl sm:text-2xl font-black text-[#021523]">Featured Products</h2>
             <p className="text-sm text-[#818ea0] mt-1">Hand-picked top deals just for you</p>
           </div>
-          <Link href="/shop?featured=true" className="text-sm font-semibold text-[#0070dc] hover:text-[#041e42] transition-colors">
+          <Link href="/shop?featured=true" className="text-sm font-semibold text-[#0070dc] hover:text-[var(--cms-color-primary)] transition-colors">
             See All →
           </Link>
         </div>

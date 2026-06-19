@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Image from 'next/image'
@@ -36,7 +36,7 @@ export default function CategoryLanding({ category, brandGroups, totalProducts, 
   return (
     <div>
       {/* Banner */}
-      <div className="relative w-full h-32 sm:h-44 md:h-56 lg:h-64 rounded-2xl overflow-hidden mb-8 bg-gradient-to-br from-[#021523] to-[#0a3060]">
+      <div className="relative w-full h-32 sm:h-44 md:h-56 lg:h-64 rounded-2xl overflow-hidden mb-8 bg-gradient-to-br from-[#021523] to-[var(--cms-color-primary-hover)]">
         {bannerUrl && (
           <Image src={bannerUrl} alt={category.name} fill className="object-cover" priority />
         )}
@@ -57,7 +57,7 @@ export default function CategoryLanding({ category, brandGroups, totalProducts, 
 
       {/* Brand sections */}
       <div className="space-y-12">
-        {brandGroups.map(({ brand, products }) => {
+        {brandGroups.map(({ brand, products }, idx) => {
           if (!products.length) return null
           const key = brand?.slug ?? '__no_brand'
           const isExp = expanded.has(key)
@@ -73,9 +73,9 @@ export default function CategoryLanding({ category, brandGroups, totalProducts, 
                 const fallbackUrl = brand?.logo_url?.includes('supabase') ? brand.logo_url : null
                 const bannerUrl = perCategoryUrl ?? fallbackUrl
                 return (
-                  <div className="relative h-28 sm:h-40 md:h-56 rounded-xl overflow-hidden mb-4 bg-gradient-to-r from-[#021523] to-[#0a3060]">
+                  <div className="relative h-28 sm:h-40 md:h-56 rounded-xl overflow-hidden mb-4 bg-gradient-to-r from-[#021523] to-[var(--cms-color-primary-hover)]">
                     {bannerUrl && (
-                      <Image src={bannerUrl} alt={brand?.name ?? ''} fill className="object-cover" />
+                      <Image src={bannerUrl} alt={brand?.name ?? ''} fill className="object-cover" priority={idx === 0} />
                     )}
                     {!bannerUrl && (
                       <div className="absolute inset-0 opacity-5"
@@ -113,7 +113,7 @@ export default function CategoryLanding({ category, brandGroups, totalProducts, 
               {remaining > 0 && (
                 <button
                   onClick={() => toggle(key)}
-                  className="mt-5 w-full py-3 rounded-xl text-sm font-semibold transition-all border border-dashed border-[#c5ccd5] text-[#818ea0] hover:border-[#041e42] hover:text-[#041e42] hover:bg-[#f8f9ff]"
+                  className="mt-5 w-full py-3 rounded-xl text-sm font-semibold transition-all border border-dashed border-[#c5ccd5] text-[#818ea0] hover:border-[var(--cms-color-primary)] hover:text-[var(--cms-color-primary)] hover:bg-[#f8f9ff]"
                 >
                   {isExp
                     ? 'Show less'

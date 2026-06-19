@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes } from 'react'
+﻿import { ButtonHTMLAttributes } from 'react'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
@@ -18,9 +18,9 @@ export default function Button({
 
   const variants = {
     primary: 'bg-[#00a046] hover:bg-[#037535] text-white',
-    secondary: 'bg-[#041e42] hover:bg-[#0a3060] text-white',
-    outline: 'border-2 border-[#041e42] text-[#041e42] hover:bg-[#041e42] hover:text-white',
-    ghost: 'text-[#041e42] hover:bg-[#f2f3f5]',
+    secondary: 'bg-[var(--cms-color-primary)] hover:bg-[var(--cms-color-primary-hover)] text-white',
+    outline: 'border-2 border-[var(--cms-color-primary)] text-[var(--cms-color-primary)] hover:bg-[var(--cms-color-primary)] hover:text-white',
+    ghost: 'text-[var(--cms-color-primary)] hover:bg-[#f2f3f5]',
   }
 
   const sizes = {

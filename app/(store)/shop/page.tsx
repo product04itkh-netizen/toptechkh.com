@@ -9,7 +9,10 @@ import CategoryLanding from '@/components/shop/CategoryLanding'
 interface ShopPageProps {
   searchParams: Promise<{
     category?: string
+    subcategory?: string
+    subsubcategory?: string
     brand?: string
+    series?: string
     minPrice?: string
     maxPrice?: string
     instock?: string
@@ -22,67 +25,104 @@ interface ShopPageProps {
 }
 
 async function getProducts(params: Awaited<ShopPageProps['searchParams']>) {
-  // Resolve slug → id for accurate filtering (can't filter aliased joined columns directly)
   let categoryId: number | null = null
   let categoryName: string | null = null
   let brandId: number | null = null
   let brandName: string | null = null
+  let seriesId: number | null = null
+  let seriesName: string | null = null
+  let subcategoryId: number | null = null
+  let subcategoryName: string | null = null
+  let subSubcategoryId: number | null = null
+  let subSubcategoryName: string | null = null
 
   await Promise.all([
     params.category
-      ? supabase.from('categories').select('id, name').eq('slug', params.category).single()
-          .then(({ data }) => { if (data) { categoryId = data.id; categoryName = data.name } })
+      ? supabase.from('categories').select('id, name').eq('slug', params.category).maybeSingle()
+          .then(({ data, error }) => {
+            if (error) console.error('Category fetch error:', error)
+            if (data) { categoryId = data.id; categoryName = data.name }
+          })
       : Promise.resolve(),
     params.brand
-      ? supabase.from('brands').select('id, name').eq('slug', params.brand).single()
-          .then(({ data }) => { if (data) { brandId = data.id; brandName = data.name } })
+      ? supabase.from('brands').select('id, name').eq('slug', params.brand).maybeSingle()
+          .then(({ data, error }) => {
+            if (error) console.error('Brand fetch error:', error)
+            if (data) { brandId = data.id; brandName = data.name }
+          })
+      : Promise.resolve(),
+    params.series
+      ? supabase.from('series').select('id, name').eq('slug', params.series).maybeSingle()
+          .then(({ data, error }) => {
+            if (error) console.error('Series fetch error:', error)
+            if (data) { seriesId = data.id; seriesName = data.name }
+          })
+      : Promise.resolve(),
+    params.subcategory
+      ? supabase.from('subcategories').select('id, name').eq('slug', params.subcategory).maybeSingle()
+          .then(({ data, error }) => {
+            if (error) console.error('Subcategory fetch error:', error)
+            if (data) { subcategoryId = data.id; subcategoryName = data.name }
+          })
+      : Promise.resolve(),
+    params.subsubcategory
+      ? supabase.from('sub_subcategories').select('id, name').eq('slug', params.subsubcategory).maybeSingle()
+          .then(({ data, error }) => {
+            if (error) console.error('Sub-subcategory fetch error:', error)
+            if (data) { subSubcategoryId = data.id; subSubcategoryName = data.name }
+          })
       : Promise.resolve(),
   ])
 
   let query = supabase
     .from('products')
-    .select('*, category:categories(id,name,slug), brand:brands(id,name,slug)', { count: 'exact' })
+    .select('*, category:categories(id,name,slug), brand:brands(id,name,slug), series:series(id,name,slug), subcategory:subcategories(id,name,slug), sub_subcategory:sub_subcategories(id,name,slug)', { count: 'exact' })
 
-  if (params.q) query = query.ilike('name', `%${params.q}%`)
-  if (categoryId !== null) query = query.eq('category_id', categoryId)
-  if (brandId !== null) query = query.eq('brand_id', brandId)
-  if (params.minPrice) query = query.gte('price', Number(params.minPrice))
-  if (params.maxPrice) query = query.lte('price', Number(params.maxPrice))
+  if (params.q)                   query = query.ilike('name', `%${params.q}%`)
+  if (categoryId !== null)        query = query.eq('category_id', categoryId)
+  if (brandId !== null)           query = query.eq('brand_id', brandId)
+  if (seriesId !== null)          query = query.eq('series_id', seriesId)
+  if (subcategoryId !== null)     query = query.eq('subcategory_id', subcategoryId)
+  if (subSubcategoryId !== null)  query = query.eq('sub_subcategory_id', subSubcategoryId)
+  if (params.minPrice)       query = query.gte('price', Number(params.minPrice))
+  if (params.maxPrice)       query = query.lte('price', Number(params.maxPrice))
   if (params.instock === 'true') query = query.eq('stock_status', 'instock')
   if (params.featured === 'true') query = query.eq('featured', true)
   if (params.sale === 'true') query = query.not('sale_price', 'is', null)
 
   const sort = params.sort || 'newest'
-  if (sort === 'price_asc') query = query.order('price', { ascending: true })
+  if (sort === 'price_asc')  query = query.order('price', { ascending: true })
   else if (sort === 'price_desc') query = query.order('price', { ascending: false })
   else if (sort === 'rating') query = query.order('rating', { ascending: false })
-  else query = query.order('created_at', { ascending: false })
+  else                        query = query.order('created_at', { ascending: false })
 
   const page = Math.max(1, Number(params.page || 1))
   const perPage = 24
   query = query.range((page - 1) * perPage, page * perPage - 1)
 
   const { data, count } = await query
-  return { products: (data as Product[]) || [], total: count || 0, page, perPage, categoryName, brandName }
+  return { products: (data as Product[]) || [], total: count || 0, page, perPage, categoryName, brandName, seriesName, subcategoryName, subSubcategoryName }
 }
 
 function getPageTitle(
   params: Awaited<ShopPageProps['searchParams']>,
-  categoryName: string | null,
-  brandName: string | null,
+  names: { categoryName: string | null; brandName: string | null; seriesName: string | null; subcategoryName: string | null; subSubcategoryName: string | null },
 ) {
-  if (params.q) return `Search: "${params.q}"`
+  if (params.q)                return `Search: "${params.q}"`
   if (params.featured === 'true') return 'Featured Products'
-  if (params.sale === 'true') return 'Hot Deals'
-  if (params.category) return categoryName ?? params.category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
-  if (params.brand) return brandName ?? params.brand.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  if (params.sale === 'true')  return 'Hot Deals'
+  if (params.subsubcategory)   return names.subSubcategoryName ?? params.subsubcategory.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  if (params.subcategory)      return names.subcategoryName ?? params.subcategory.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  if (params.series)           return names.seriesName ?? params.series.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  if (params.category)         return names.categoryName ?? params.category.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  if (params.brand)            return names.brandName ?? params.brand.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
   return 'All Products'
 }
 
 async function ShopContent({ searchParams }: { searchParams: Awaited<ShopPageProps['searchParams']> }) {
-  const { products, total, page, perPage, categoryName, brandName } = await getProducts(searchParams)
+  const { products, total, page, perPage, categoryName, brandName, seriesName, subcategoryName, subSubcategoryName } = await getProducts(searchParams)
   const totalPages = Math.ceil(total / perPage)
-  const title = getPageTitle(searchParams, categoryName, brandName)
+  const title = getPageTitle(searchParams, { categoryName, brandName, seriesName, subcategoryName, subSubcategoryName })
 
   return (
     <div className="flex-1 min-w-0">
@@ -127,18 +167,19 @@ async function ShopContent({ searchParams }: { searchParams: Awaited<ShopPagePro
 }
 
 async function getCategoryLandingData(slug: string) {
-  const { data: category } = await supabase
+  const { data: category, error } = await supabase
     .from('categories')
     .select('id, name, slug, image_url, description')
     .eq('slug', slug)
-    .single()
+    .maybeSingle()
 
+  if (error) console.error('Category landing data fetch error:', error)
   if (!category) return null
 
   const [{ data: products }, { data: bannerRows }] = await Promise.all([
     supabase
       .from('products')
-      .select('*, category:categories(id,name,slug), brand:brands(id,name,slug,logo_url)')
+      .select('*, category:categories(id,name,slug), brand:brands(id,name,slug,logo_url), series:series(id,name,slug), subcategory:subcategories(id,name,slug)')
       .eq('category_id', category.id)
       .order('created_at', { ascending: false }),
     supabase
@@ -147,7 +188,6 @@ async function getCategoryLandingData(slug: string) {
       .eq('category_id', category.id),
   ])
 
-  // brand_id → per-category banner URL
   const brandBanners: Record<number, string> = {}
   for (const row of (bannerRows ?? [])) {
     brandBanners[row.brand_id] = row.banner_url
@@ -167,34 +207,71 @@ async function getCategoryLandingData(slug: string) {
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams
 
-  // Category landing — no extra filters applied
-  const isCategoryLanding = params.category && !params.brand && !params.q && !params.featured && !params.sale && !params.minPrice
+  const isCategoryLanding = params.category && !params.brand && !params.series && !params.subcategory
+    && !params.q && !params.featured && !params.sale && !params.minPrice
 
-  if (isCategoryLanding) {
-    const data = await getCategoryLandingData(params.category!)
-    if (data) {
-      return (
-        <div className="max-w-[1290px] mx-auto px-4 py-6">
-          <div className="text-xs text-[#818ea0] mb-6">
-            <a href="/" className="hover:text-[#041e42]">Home</a>{' / '}
-            <a href="/shop" className="hover:text-[#041e42]">Shop</a>{' / '}
-            <span className="text-[#021523]">{data.category.name}</span>
-          </div>
-          <CategoryLanding
-            category={data.category}
-            brandGroups={data.brandGroups}
-            totalProducts={data.total}
-            brandBanners={data.brandBanners}
-          />
-        </div>
-      )
-    }
-  }
-
-  const [{ data: categories }, { data: brands }] = await Promise.all([
+  // Always fetch sidebar data + category landing data in parallel
+  const [
+    { data: categoriesRaw },
+    { data: brandsRaw },
+    seriesRaw,
+    subcatsRaw,
+    subSubsRaw,
+    categoryLandingData,
+  ] = await Promise.all([
     supabase.from('categories').select('name, slug').order('name'),
     supabase.from('brands').select('name, slug').order('name'),
+    supabase.from('series').select('name, slug, brand:brands(slug)').order('name')
+      .then(({ data }) => (data ?? []).map((s: any) => ({ name: s.name, slug: s.slug, brand_slug: s.brand?.slug ?? '' }))),
+    supabase.from('subcategories').select('name, slug, category:categories(slug)').order('name')
+      .then(({ data }) => (data ?? []).map((s: any) => ({ name: s.name, slug: s.slug, category_slug: s.category?.slug ?? '' }))),
+    supabase.from('sub_subcategories').select('name, slug, subcategory:subcategories(slug)').order('name')
+      .then(({ data }) => (data ?? []).map((s: any) => ({ name: s.name, slug: s.slug, subcategory_slug: s.subcategory?.slug ?? '' }))),
+    isCategoryLanding ? getCategoryLandingData(params.category!) : Promise.resolve(null),
   ])
+
+  const categories    = categoriesRaw ?? []
+  const brands        = brandsRaw ?? []
+  const allSeries     = seriesRaw
+  const allSubcats    = subcatsRaw
+  const allSubSubs    = subSubsRaw
+
+  const sidebar = (
+    <aside className="hidden lg:block flex-shrink-0">
+      <Suspense fallback={<div className="h-96 bg-[#f2f3f5] rounded animate-pulse" />}>
+        <FilterSidebar
+          categories={categories}
+          brands={brands}
+          allSeries={allSeries}
+          allSubcategories={allSubcats}
+          allSubSubcategories={allSubSubs}
+        />
+      </Suspense>
+    </aside>
+  )
+
+  if (isCategoryLanding && categoryLandingData) {
+    return (
+      <div className="max-w-[1290px] mx-auto px-4 py-6">
+        <div className="text-xs text-[#818ea0] mb-4">
+          <a href="/" className="hover:text-[#041e42]">Home</a>{' / '}
+          <a href="/shop" className="hover:text-[#041e42]">Shop</a>{' / '}
+          <span className="text-[#021523]">{categoryLandingData.category.name}</span>
+        </div>
+        <div className="flex gap-6">
+          {sidebar}
+          <div className="flex-1 min-w-0">
+            <CategoryLanding
+              category={categoryLandingData.category}
+              brandGroups={categoryLandingData.brandGroups}
+              totalProducts={categoryLandingData.total}
+              brandBanners={categoryLandingData.brandBanners}
+            />
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-[1290px] mx-auto px-4 py-6">
@@ -203,11 +280,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         <span className="text-[#021523]">Shop</span>
       </div>
       <div className="flex gap-6">
-        <aside className="hidden lg:block flex-shrink-0">
-          <Suspense fallback={<div className="h-96 bg-[#f2f3f5] rounded animate-pulse" />}>
-            <FilterSidebar categories={categories ?? []} brands={brands ?? []} />
-          </Suspense>
-        </aside>
+        {sidebar}
         <Suspense
           fallback={
             <div className="flex-1">

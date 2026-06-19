@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { SlidersHorizontal } from 'lucide-react'
@@ -39,7 +39,7 @@ export default function SortBar({ total, onFilterClick }: SortBarProps) {
         <select
           value={currentSort}
           onChange={(e) => handleSort(e.target.value)}
-          className="text-sm border border-[#e5e8ec] rounded-md px-3 py-1.5 text-[#021523] outline-none focus:border-[#041e42] cursor-pointer"
+          className="text-sm border border-[#e5e8ec] rounded-md px-3 py-1.5 text-[#021523] outline-none focus:border-[var(--cms-color-primary)] cursor-pointer"
         >
           <option value="newest">Newest First</option>
           <option value="price_asc">Price: Low to High</option>

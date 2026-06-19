@@ -6,28 +6,33 @@ export const metadata = { title: 'Custom PC Builder — Top Tech Computer' }
 
 export default async function BuildPCPage() {
   // Fetch components category ID
-  const { data: compCat } = await supabase
+  const { data: compCat, error: compErr } = await supabase
     .from('categories')
     .select('id')
     .eq('slug', 'components')
-    .single()
+    .maybeSingle()
 
   // Also fetch PC category for cases/complete builds
-  const { data: pcCat } = await supabase
+  const { data: pcCat, error: pcErr } = await supabase
     .from('categories')
     .select('id')
     .eq('slug', 'pc')
-    .single()
+    .maybeSingle()
+
+  if (compErr || pcErr) {
+    console.error('Category fetch failed:', { compErr, pcErr })
+  }
 
   const catIds = [compCat?.id, pcCat?.id].filter(Boolean) as number[]
 
+  const limit = parseInt(process.env.NEXT_PUBLIC_MAX_PRODUCTS_GRID || '300')
   const { data: products } = await supabase
     .from('products')
     .select('*, category:categories(id,name,slug), brand:brands(id,name,slug)')
     .in('category_id', catIds.length ? catIds : [-1])
     .eq('stock_status', 'instock')
     .order('price', { ascending: true })
-    .limit(300)
+    .limit(limit)
 
   return (
     <div className="min-h-screen bg-[#f7f8fa]">

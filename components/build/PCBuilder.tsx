@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useMemo } from 'react'
 import Image from 'next/image'
@@ -337,7 +337,7 @@ export default function PCBuilder({ products }: { products: Product[] }) {
                   )}
                 </div>
                 {chosenPart && (
-                  <button onClick={() => clearSlot(slot.id)} className="text-[#818ea0] hover:text-[#ef262c] transition-colors p-1" title="Remove">
+                  <button onClick={() => clearSlot(slot.id)} className="text-[#818ea0] hover:text-[var(--cms-color-accent)] transition-colors p-1" title="Remove">
                     <Trash2 size={14} />
                   </button>
                 )}
@@ -360,7 +360,7 @@ export default function PCBuilder({ products }: { products: Product[] }) {
                         onClick={() => selectPart(slot.id, product)}
                         className={`snap-start flex-shrink-0 w-40 sm:w-44 rounded-xl border-2 p-2.5 text-left transition-all duration-150 ${
                           isSelected
-                            ? 'border-[#041e42] bg-[#eef2ff] shadow-md ring-1 ring-[#041e42]/20'
+                            ? 'border-[var(--cms-color-primary)] bg-[#eef2ff] shadow-md ring-1 ring-[var(--cms-color-primary)]/20'
                             : 'border-[#e5e8ec] bg-white hover:border-[#9aacbe] hover:shadow-sm'
                         }`}
                       >
@@ -377,14 +377,14 @@ export default function PCBuilder({ products }: { products: Product[] }) {
                             </div>
                           )}
                           {isSelected && (
-                            <div className="absolute top-1.5 right-1.5 bg-[#041e42] rounded-full p-0.5">
+                            <div className="absolute top-1.5 right-1.5 bg-[var(--cms-color-primary)] rounded-full p-0.5">
                               <Check size={9} className="text-white" />
                             </div>
                           )}
                         </div>
 
                         {product.brand && (
-                          <p className="text-[9px] font-bold text-[#041e42] uppercase tracking-wide mb-0.5 truncate">
+                          <p className="text-[9px] font-bold text-[var(--cms-color-primary)] uppercase tracking-wide mb-0.5 truncate">
                             {(product.brand as any).name}
                           </p>
                         )}
@@ -393,7 +393,7 @@ export default function PCBuilder({ products }: { products: Product[] }) {
                         </p>
 
                         <div className="flex items-center justify-between gap-1">
-                          <p className="text-sm font-black text-[#041e42]">${price.toFixed(2)}</p>
+                          <p className="text-sm font-black text-[var(--cms-color-primary)]">${price.toFixed(2)}</p>
                           {product.sale_price && (
                             <p className="text-[10px] text-[#818ea0] line-through">${product.price.toFixed(2)}</p>
                           )}
@@ -401,7 +401,7 @@ export default function PCBuilder({ products }: { products: Product[] }) {
 
                         <div className={`mt-1.5 text-center text-[10px] font-bold rounded-md py-1 transition-colors ${
                           isSelected
-                            ? 'bg-[#041e42] text-white'
+                            ? 'bg-[var(--cms-color-primary)] text-white'
                             : 'bg-[#f2f3f5] text-[#818ea0]'
                         }`}>
                           {isSelected ? '✓ Selected' : 'Select'}
@@ -432,7 +432,7 @@ export default function PCBuilder({ products }: { products: Product[] }) {
         <div className="lg:sticky lg:top-6 bg-white border border-[#e5e8ec] rounded-2xl overflow-hidden shadow-sm">
 
           {/* Header */}
-          <div className="bg-[#041e42] px-4 py-3.5">
+          <div className="bg-[var(--cms-color-primary)] px-4 py-3.5">
             <h3 className="font-black text-white flex items-center gap-2">
               <Wrench size={15} /> Your Build
             </h3>
@@ -464,7 +464,7 @@ export default function PCBuilder({ products }: { products: Product[] }) {
                         <p className={`text-[11px] font-semibold line-clamp-1 flex-1 ${hasIssue ? 'text-amber-700' : 'text-[#021523]'}`}>
                           {part.name}
                         </p>
-                        <p className="text-[11px] font-black text-[#041e42] flex-shrink-0 ml-1">
+                        <p className="text-[11px] font-black text-[var(--cms-color-primary)] flex-shrink-0 ml-1">
                           ${(part.sale_price ?? part.price).toFixed(2)}
                         </p>
                       </div>
@@ -473,7 +473,7 @@ export default function PCBuilder({ products }: { products: Product[] }) {
                     )}
                   </div>
                   {part && (
-                    <button onClick={() => clearSlot(slot.id)} className="text-[#c5ccd5] hover:text-[#ef262c] flex-shrink-0 transition-colors">
+                    <button onClick={() => clearSlot(slot.id)} className="text-[#c5ccd5] hover:text-[var(--cms-color-accent)] flex-shrink-0 transition-colors">
                       <Trash2 size={12} />
                     </button>
                   )}
@@ -508,7 +508,7 @@ export default function PCBuilder({ products }: { products: Product[] }) {
           <div className="border-t border-[#e5e8ec] px-4 py-4 space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-sm font-bold text-[#021523]">Estimated Total</span>
-              <span className="text-xl font-black text-[#041e42]">
+              <span className="text-xl font-black text-[var(--cms-color-primary)]">
                 {totalPrice > 0 ? `$${totalPrice.toFixed(2)}` : '—'}
               </span>
             </div>
@@ -516,7 +516,7 @@ export default function PCBuilder({ products }: { products: Product[] }) {
             <button
               onClick={handleAddAllToCart}
               disabled={selectedParts.length === 0}
-              className="w-full flex items-center justify-center gap-2 py-3 bg-[#041e42] hover:bg-[#0a3060] disabled:bg-[#c8cdd5] disabled:cursor-not-allowed text-white font-bold rounded-xl text-sm transition-all"
+              className="w-full flex items-center justify-center gap-2 py-3 bg-[var(--cms-color-primary)] hover:bg-[var(--cms-color-primary-hover)] disabled:bg-[#c8cdd5] disabled:cursor-not-allowed text-white font-bold rounded-xl text-sm transition-all"
             >
               {added ? (
                 <><Check size={15} /> Added to Cart!</>
@@ -530,7 +530,7 @@ export default function PCBuilder({ products }: { products: Product[] }) {
             {selectedParts.length > 0 && (
               <button
                 onClick={() => setSelected({})}
-                className="w-full text-xs text-[#818ea0] hover:text-[#ef262c] transition-colors"
+                className="w-full text-xs text-[#818ea0] hover:text-[var(--cms-color-accent)] transition-colors"
               >
                 Clear build
               </button>

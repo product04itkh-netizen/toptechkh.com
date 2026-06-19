@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
 const categoryStyle: Record<string, { emoji: string; bg: string; border: string; hover: string }> = {
@@ -37,7 +37,7 @@ export default async function FeaturedCategories() {
             <h2 className="text-xl sm:text-2xl font-black text-[#021523]">Shop by Category</h2>
             <p className="text-sm text-[#818ea0] mt-1">Find what you need in our full lineup</p>
           </div>
-          <Link href="/shop" className="text-sm font-semibold text-[#0070dc] hover:text-[#041e42] transition-colors">
+          <Link href="/shop" className="text-sm font-semibold text-[#0070dc] hover:text-[var(--cms-color-primary)] transition-colors">
             View All →
           </Link>
         </div>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -32,7 +32,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const outOfStock = product.stock_status === 'outofstock'
 
   return (
-    <div className="group relative bg-white border border-[#e5e8ec] rounded-xl overflow-hidden hover:shadow-lg hover:border-[#041e42] transition-all duration-200 flex flex-col">
+    <div className="group relative bg-white border border-[#e5e8ec] rounded-xl overflow-hidden hover:shadow-lg hover:border-[var(--cms-color-primary)] transition-all duration-200 flex flex-col">
 
       {/* Badges */}
       <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
@@ -68,14 +68,14 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Brand */}
         {product.brand && (
-          <p className="text-[10px] font-bold text-[#041e42] uppercase tracking-wider mb-1">
+          <p className="text-[10px] font-bold text-[var(--cms-color-primary)] uppercase tracking-wider mb-1">
             {product.brand.name}
           </p>
         )}
 
         {/* Model name */}
         <Link href={`/product/${product.slug}`}>
-          <h3 className="text-sm font-semibold text-[#021523] line-clamp-2 hover:text-[#041e42] transition-colors leading-snug mb-2">
+          <h3 className="text-sm font-semibold text-[#021523] line-clamp-2 hover:text-[var(--cms-color-primary)] transition-colors leading-snug mb-2">
             {product.name}
           </h3>
         </Link>
@@ -85,7 +85,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <ul className="flex-1 mb-3 space-y-0.5">
             {bullets.map((b, i) => (
               <li key={i} className="flex items-start gap-1.5 text-[11px] text-[#555] leading-snug">
-                <span className="mt-[3px] w-1 h-1 rounded-full bg-[#041e42] flex-shrink-0" />
+                <span className="mt-[3px] w-1 h-1 rounded-full bg-[var(--cms-color-primary)] flex-shrink-0" />
                 <span className="line-clamp-1">{b}</span>
               </li>
             ))}
@@ -106,7 +106,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <button
           onClick={() => addItem(product)}
           disabled={outOfStock}
-          className="w-full flex items-center justify-center bg-[#041e42] hover:bg-[#0a3060] disabled:bg-[#c8cdd5] disabled:cursor-not-allowed text-white font-black text-base px-3 py-2.5 rounded-lg transition-colors"
+          className="w-full flex items-center justify-center bg-[var(--cms-color-primary)] hover:bg-[var(--cms-color-primary-hover)] disabled:bg-[#c8cdd5] disabled:cursor-not-allowed text-white font-black text-base px-3 py-2.5 rounded-lg transition-colors"
         >
           {outOfStock ? 'Out of Stock' : `$${displayPrice.toFixed(2)}`}
         </button>

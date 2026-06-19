@@ -1,13 +1,13 @@
-interface BadgeProps {
+﻿interface BadgeProps {
   children: React.ReactNode
   variant?: 'sale' | 'new' | 'featured' | 'outofstock'
 }
 
 export default function Badge({ children, variant = 'sale' }: BadgeProps) {
   const styles = {
-    sale: 'bg-[#ef262c] text-white',
-    new: 'bg-[#041e42] text-white',
-    featured: 'bg-[#ffbd27] text-[#041e42]',
+    sale: 'bg-[var(--cms-color-accent)] text-white',
+    new: 'bg-[var(--cms-color-primary)] text-white',
+    featured: 'bg-[#ffbd27] text-[var(--cms-color-primary)]',
     outofstock: 'bg-gray-400 text-white',
   }
   return (
