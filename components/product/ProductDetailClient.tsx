@@ -93,15 +93,12 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
           <div className="relative w-full aspect-[4/3] bg-[#f5f6f8] rounded-xl overflow-hidden group flex items-center justify-center">
             {images.length > 0 ? (
               <>
-                <Image
+                <img
                   src={images[activeImage]}
                   alt={product.name}
-                  width={600}
-                  height={450}
                   className="w-full h-full object-contain p-3 sm:p-6 transition-transform duration-300 group-hover:scale-[1.03]"
-                  priority
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  unoptimized
+                  loading="eager"
+                  decoding="async"
                 />
                 {images.length > 1 && (
                   <span className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white text-[11px] font-medium px-2 py-0.5 rounded-full pointer-events-none">
