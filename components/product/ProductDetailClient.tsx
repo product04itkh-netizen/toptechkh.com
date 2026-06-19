@@ -1,6 +1,5 @@
 ﻿'use client'
 
-import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import { ShieldCheck, Truck, RotateCcw, ChevronLeft, ChevronRight, Copy, Check, Send } from 'lucide-react'
 import { Product } from '@/lib/types'
@@ -82,7 +81,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                     : 'border-[#e5e8ec] hover:border-[#9aacbe]'
                 }`}
               >
-                <Image src={img} alt={`${product.name} image ${idx + 1}`} fill className="object-contain p-1.5" />
+                <img src={img} alt={`${product.name} image ${idx + 1}`} className="w-full h-full object-contain p-1.5" />
               </button>
             ))}
           </div>
