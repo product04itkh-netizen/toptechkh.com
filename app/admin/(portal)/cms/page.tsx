@@ -64,7 +64,7 @@ export default async function CmsPagesListPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="p-6">
       <div className="flex items-start justify-between mb-6">
         <div>
           <div className="text-xs text-[#818ea0] mb-1">Admin / CMS</div>
@@ -187,11 +187,11 @@ export default async function CmsPagesListPage() {
                       return (
                         <div key={section.id} className="flex items-center gap-3 group">
                           {/* Order */}
-                          <span className="text-[10px] font-mono text-[#c5ccd5] w-4 text-right flex-shrink-0">
+                          <span className="text-[11px] font-mono text-[#c5ccd5] w-4 text-right flex-shrink-0">
                             {i + 1}
                           </span>
                           {/* Type badge */}
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded border flex-shrink-0 ${colorCls}`}>
+                          <span className={`text-[11px] font-bold px-2 py-0.5 rounded border flex-shrink-0 ${colorCls}`}>
                             {SECTION_TYPE_LABELS[section.type]}
                           </span>
                           {/* Content snippet */}
@@ -201,7 +201,7 @@ export default async function CmsPagesListPage() {
                           {/* Edit shortcut */}
                           <Link
                             href={`/admin/cms/${page.id}/sections/${section.id}/edit`}
-                            className="text-[10px] text-[#818ea0] hover:text-[#041e42] transition-colors flex-shrink-0"
+                            className="text-[11px] text-[#818ea0] hover:text-[#041e42] transition-colors flex-shrink-0"
                           >
                             Edit
                           </Link>
@@ -213,7 +213,7 @@ export default async function CmsPagesListPage() {
                     {hiddenSections.length > 0 && (
                       <div className="flex items-center gap-2 pt-1 border-t border-[#f2f3f5] mt-1">
                         <EyeOff size={11} className="text-[#c5ccd5]" />
-                        <span className="text-[10px] text-[#c5ccd5]">
+                        <span className="text-[11px] text-[#c5ccd5]">
                           {hiddenSections.length} hidden section{hiddenSections.length !== 1 ? 's' : ''}
                         </span>
                       </div>

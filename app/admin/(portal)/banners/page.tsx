@@ -26,7 +26,7 @@ export default async function BannersPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="p-6">
       <div className="mb-6">
         <div className="text-xs text-[#818ea0] mb-1">Admin / Banners</div>
         <h1 className="text-2xl font-black text-[#021523]">Hero Banners</h1>

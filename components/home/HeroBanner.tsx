@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
-import HeroBannerCarousel, { BannerSlide } from './HeroBannerCarousel'
+import HeroBannerCarousel, { BannerSlide, OrderStrip } from './HeroBannerCarousel'
+import { getSiteSettings } from '@/lib/site-settings'
 
 const STATIC_FALLBACK: BannerSlide[] = [
   { id: -1, image_url: '/banner-main.png',     link_url: '/shop' },
@@ -8,6 +9,14 @@ const STATIC_FALLBACK: BannerSlide[] = [
 ]
 
 export default async function HeroBanner() {
+  const site = await getSiteSettings()
+  const primary = site.contact.groups[0]
+  const strip: OrderStrip = {
+    label: site.home.orderStripLabel,
+    telegram: (primary?.telegram ?? []).map((t) => ({ label: t.short || t.label, url: t.url })),
+    phones: primary?.phones ?? [],
+  }
+
   const { data } = await supabase
     .from('banners')
     .select('id, image_url, link_url')
@@ -19,5 +28,5 @@ export default async function HeroBanner() {
       ? data.map((b) => ({ id: b.id, image_url: b.image_url, link_url: b.link_url }))
       : STATIC_FALLBACK
 
-  return <HeroBannerCarousel slides={slides} />
+  return <HeroBannerCarousel slides={slides} strip={strip} />
 }

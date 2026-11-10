@@ -35,7 +35,7 @@ export default function CategoryEditForm({ category, action, categoryId, brands,
         <h1 className="text-2xl font-black text-[#021523]">Edit Category</h1>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6 max-w-2xl">
+      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6">
         <form action={formAction} className="space-y-5">
           <input type="hidden" name="id" value={category.id} />
           {state?.error && (
@@ -66,21 +66,13 @@ export default function CategoryEditForm({ category, action, categoryId, brands,
                 <p className="text-xs text-[#818ea0]">Displays this category in the header and mobile menu</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="hidden"
-                  name="show_in_nav"
-                  value="false"
-                />
+                {/* One checkbox only: an unchecked box sends nothing, which the action reads as false */}
                 <input
                   type="checkbox"
                   name="show_in_nav"
                   value="true"
                   defaultChecked={category.show_in_nav ?? true}
                   className="sr-only peer"
-                  onChange={(e) => {
-                    const hidden = e.currentTarget.previousElementSibling as HTMLInputElement
-                    hidden.disabled = e.currentTarget.checked
-                  }}
                 />
                 <div className="w-11 h-6 bg-[#e5e8ec] peer-checked:bg-[#041e42] rounded-full transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full" />
               </label>

@@ -522,7 +522,9 @@ export default function PCBuilder({ products }: { products: Product[] }) {
                 <><Check size={15} /> Added to Cart!</>
               ) : (
                 <><ShoppingCart size={15} />
-                  {selectedParts.length === 0 ? 'Select Parts to Continue' : `Add ${selectedParts.length} Parts to Cart`}
+                  {selectedParts.length === 0
+                    ? 'Select Parts to Continue'
+                    : `Add ${selectedParts.length} ${selectedParts.length === 1 ? 'Part' : 'Parts'} to Cart`}
                 </>
               )}
             </button>

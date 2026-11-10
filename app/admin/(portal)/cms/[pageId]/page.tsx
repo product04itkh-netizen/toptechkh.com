@@ -25,7 +25,7 @@ export default async function CmsPageEditorPage({ params }: Props) {
   const frontendUrl = p.slug === 'home' ? '/' : `/pages/${encodeURIComponent(p.slug)}`
 
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="p-6">
       <div className="flex items-start justify-between mb-6">
         <div>
           <div className="text-xs text-[#818ea0] mb-1">

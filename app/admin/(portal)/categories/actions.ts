@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { categorySchema } from '@/lib/validation'
 import { requireAdmin } from '@/lib/admin-session'
-import { rethrowFrameworkError } from '@/lib/action-errors'
+import { rethrowFrameworkError, errorMessage } from '@/lib/action-errors'
 
 export async function createCategory(_: unknown, formData: FormData) {
   await requireAdmin()
@@ -58,7 +58,7 @@ export async function createCategory(_: unknown, formData: FormData) {
     redirect('/admin/categories?toast=success&msg=Category+created')
   } catch (e) {
     rethrowFrameworkError(e)
-    const msg = e instanceof Error ? e.message : 'Category validation failed'
+    const msg = errorMessage(e, 'Category validation failed')
     return { error: msg }
   }
 }
@@ -171,7 +171,7 @@ export async function updateCategory(_: unknown, formData: FormData) {
     redirect('/admin/categories?toast=success&msg=Category+updated')
   } catch (e) {
     rethrowFrameworkError(e)
-    return { error: e instanceof Error ? e.message : 'Validation failed' }
+    return { error: errorMessage(e, 'Validation failed') }
   }
 }
 
@@ -198,7 +198,7 @@ export async function deleteCategory(id: number) {
     redirect('/admin/categories?toast=success&msg=Category+deleted')
   } catch (e) {
     rethrowFrameworkError(e)
-    const msg = e instanceof Error ? e.message : 'Failed to delete category'
+    const msg = errorMessage(e, 'Failed to delete category')
     redirect(`/admin/categories?toast=error&msg=${encodeURIComponent(msg)}`)
   }
 }
@@ -269,7 +269,7 @@ export async function toggleCategoryNav(id: number, current: boolean) {
     revalidatePath('/shop')
   } catch (e) {
     rethrowFrameworkError(e)
-    const msg = e instanceof Error ? e.message : 'Failed to update category'
+    const msg = errorMessage(e, 'Failed to update category')
     redirect(`/admin/categories?toast=error&msg=${encodeURIComponent(msg)}`)
   }
 }

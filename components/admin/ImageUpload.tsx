@@ -85,7 +85,7 @@ export default function ImageUpload({ defaultImages = [], name = 'images' }: Ima
               />
               {/* Main badge */}
               {idx === 0 && (
-                <div className="absolute bottom-0 inset-x-0 bg-[#041e42]/80 text-white text-[8px] font-bold text-center py-0.5 uppercase tracking-wider">
+                <div className="absolute bottom-0 inset-x-0 bg-[#041e42]/80 text-white text-[11px] font-bold text-center py-0.5 uppercase tracking-wider">
                   Main
                 </div>
               )}
@@ -96,7 +96,7 @@ export default function ImageUpload({ defaultImages = [], name = 'images' }: Ima
                     type="button"
                     onClick={() => moveToFront(idx)}
                     title="Set as main image"
-                    className="bg-white text-[#041e42] text-[9px] font-bold rounded px-1.5 py-0.5 leading-tight hover:bg-[#041e42] hover:text-white transition-colors"
+                    className="bg-white text-[#041e42] text-[11px] font-bold rounded px-1.5 py-0.5 leading-tight hover:bg-[#041e42] hover:text-white transition-colors"
                   >
                     Main
                   </button>
@@ -121,7 +121,7 @@ export default function ImageUpload({ defaultImages = [], name = 'images' }: Ima
             className="aspect-square rounded-lg border-2 border-dashed border-[#c5ccd5] flex flex-col items-center justify-center gap-1 text-[#818ea0] hover:border-[#041e42] hover:text-[#041e42] hover:bg-[#f8f9ff] transition-colors disabled:opacity-50"
           >
             {uploading ? <Loader2 size={18} className="animate-spin" /> : <ImagePlus size={18} />}
-            <span className="text-[9px] font-semibold uppercase tracking-wide">Add</span>
+            <span className="text-[11px] font-semibold uppercase tracking-wide">Add</span>
           </button>
         </div>
       )}

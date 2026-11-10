@@ -1,5 +1,6 @@
 ﻿import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { getSiteSettings } from '@/lib/site-settings'
 
 const categoryStyle: Record<string, { emoji: string; bg: string; border: string; hover: string }> = {
   'laptop':          { emoji: '💻', bg: 'bg-blue-50',   border: 'border-blue-100',   hover: 'hover:border-blue-400' },
@@ -15,6 +16,8 @@ const categoryStyle: Record<string, { emoji: string; bg: string; border: string;
 }
 
 export default async function FeaturedCategories() {
+  const site = await getSiteSettings()
+
   // Fetch only categories that have products
   const { data: productCats } = await supabase
     .from('products')
@@ -34,8 +37,8 @@ export default async function FeaturedCategories() {
       <div className="max-w-[1290px] mx-auto px-4">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-[#021523]">Shop by Category</h2>
-            <p className="text-sm text-[#5d6b7b] mt-1">Find what you need in our full lineup</p>
+            <h2 className="text-xl sm:text-2xl font-black text-[#021523]">{site.home.categoriesTitle}</h2>
+            <p className="text-sm text-[#5d6b7b] mt-1">{site.home.categoriesSubtitle}</p>
           </div>
           <Link href="/shop" className="text-sm font-semibold text-[#0070dc] hover:text-[var(--cms-color-primary)] transition-colors">
             View All →

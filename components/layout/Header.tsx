@@ -9,6 +9,7 @@ import {
   Laptop, Monitor, Cpu, Mouse, Package, Printer, Volume2, Wifi,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import CartLink from '@/components/layout/CartLink'
 
 const ICON_MAP: Record<string, React.ComponentType<{ size: number; className?: string }>> = {
   Laptop, Monitor, Cpu, Mouse, Package, Printer, Volume2, Wifi,
@@ -353,10 +354,13 @@ export default function Header() {
           </div>
         </nav>
 
+        {/* Cart: always one tap away, with the item count */}
+        <CartLink />
+
         {/* Mobile hamburger */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="sm:hidden ml-auto text-[#041e42] p-1"
+          className="sm:hidden text-[#041e42] p-1"
           aria-label="Toggle menu"
         >
           {mobileOpen ? <X size={22} /> : <Menu size={22} />}

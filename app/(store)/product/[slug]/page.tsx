@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 import { Product } from '@/lib/types'
 import ProductDetailClient from '@/components/product/ProductDetailClient'
 import ProductCard from '@/components/product/ProductCard'
+import { getSiteSettings } from '@/lib/site-settings'
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>
@@ -48,7 +49,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params
   const product = await getProduct(slug)
   if (!product) notFound()
-  const related = await getRelatedProducts(product)
+  const [related, site] = await Promise.all([getRelatedProducts(product), getSiteSettings()])
 
   return (
     <div className="max-w-[1290px] mx-auto px-4 py-6">
@@ -67,7 +68,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         )}
         {' / '}<span className="text-[#021523]">{product.name}</span>
       </div>
-      <ProductDetailClient product={product} />
+      <ProductDetailClient product={product} trustSignals={site.trustSignals} />
       {related.length > 0 && (
         <div className="mt-12">
           <h2 className="text-xl font-black text-[#021523] mb-6">Related Products</h2>

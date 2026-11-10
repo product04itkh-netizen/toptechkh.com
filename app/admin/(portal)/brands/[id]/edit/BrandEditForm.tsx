@@ -18,7 +18,7 @@ export default function BrandEditForm({ brand, action }: { brand: any; action: a
         </div>
         <h1 className="text-2xl font-black text-[#021523]">Edit Brand</h1>
       </div>
-      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6 max-w-lg">
+      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6">
         <form action={formAction} className="space-y-4">
           <input type="hidden" name="id" value={brand.id} />
           {state?.error && <div className="text-sm text-[#ef262c] bg-red-50 border border-red-100 rounded-lg px-4 py-3">{state.error}</div>}

@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { seriesSchema } from '@/lib/validation'
 import { requireAdmin } from '@/lib/admin-session'
-import { rethrowFrameworkError } from '@/lib/action-errors'
+import { rethrowFrameworkError, errorMessage } from '@/lib/action-errors'
 
 export async function createSeries(_: unknown, formData: FormData) {
   await requireAdmin()
@@ -23,7 +23,7 @@ export async function createSeries(_: unknown, formData: FormData) {
     redirect('/admin/series?toast=success&msg=Series+created')
   } catch (e) {
     rethrowFrameworkError(e)
-    const msg = e instanceof Error ? e.message : 'Series validation failed'
+    const msg = errorMessage(e, 'Series validation failed')
     return { error: msg }
   }
 }
@@ -46,7 +46,7 @@ export async function updateSeries(_: unknown, formData: FormData) {
     redirect('/admin/series?toast=success&msg=Series+updated')
   } catch (e) {
     rethrowFrameworkError(e)
-    const msg = e instanceof Error ? e.message : 'Series validation failed'
+    const msg = errorMessage(e, 'Series validation failed')
     return { error: msg }
   }
 }

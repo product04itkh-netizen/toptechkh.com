@@ -26,7 +26,7 @@ export default async function EditSubcategoryPage({ params }: Props) {
         <h1 className="text-2xl font-black text-[#021523]">Edit Subcategory</h1>
         <p className="text-sm text-[#818ea0] mt-0.5">{s.name}</p>
       </div>
-      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6 max-w-lg">
+      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6">
         <SubcategoryForm action={updateSubcategory} categories={categories ?? []} subcategory={s} />
       </div>
     </div>

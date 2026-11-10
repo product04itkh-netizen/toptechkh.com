@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { subcategorySchema } from '@/lib/validation'
 import { requireAdmin } from '@/lib/admin-session'
-import { rethrowFrameworkError } from '@/lib/action-errors'
+import { rethrowFrameworkError, errorMessage } from '@/lib/action-errors'
 
 export async function createSubcategory(_: unknown, formData: FormData) {
   await requireAdmin()
@@ -23,7 +23,7 @@ export async function createSubcategory(_: unknown, formData: FormData) {
     redirect('/admin/subcategories?toast=success&msg=Subcategory+created')
   } catch (e) {
     rethrowFrameworkError(e)
-    const msg = e instanceof Error ? e.message : 'Subcategory validation failed'
+    const msg = errorMessage(e, 'Subcategory validation failed')
     return { error: msg }
   }
 }
@@ -46,7 +46,7 @@ export async function updateSubcategory(_: unknown, formData: FormData) {
     redirect('/admin/subcategories?toast=success&msg=Subcategory+updated')
   } catch (e) {
     rethrowFrameworkError(e)
-    const msg = e instanceof Error ? e.message : 'Subcategory validation failed'
+    const msg = errorMessage(e, 'Subcategory validation failed')
     return { error: msg }
   }
 }

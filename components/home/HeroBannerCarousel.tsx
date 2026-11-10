@@ -4,6 +4,13 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronLeft, ChevronRight, Send } from 'lucide-react'
+import { telHref } from '@/lib/site-settings-schema'
+
+export interface OrderStrip {
+  label: string
+  telegram: { label: string; url: string }[]
+  phones: string[]
+}
 
 export interface BannerSlide {
   id: number
@@ -11,7 +18,7 @@ export interface BannerSlide {
   link_url: string
 }
 
-export default function HeroBannerCarousel({ slides }: { slides: BannerSlide[] }) {
+export default function HeroBannerCarousel({ slides, strip }: { slides: BannerSlide[]; strip?: OrderStrip }) {
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
   const touchStartX = useRef(0)
@@ -113,26 +120,37 @@ export default function HeroBannerCarousel({ slides }: { slides: BannerSlide[] }
         </div>
       </div>
 
-      {/* Telegram order strip */}
-      <div className="mt-3 sm:mt-4 bg-[var(--cms-color-primary)] border-t border-white/10">
-        <div className="max-w-[1290px] mx-auto px-4 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-y-1 gap-x-3">
-          <div className="flex items-center gap-2 text-xs text-[#6b7785] flex-wrap">
-            <Send size={11} className="text-[#ffbd27] flex-shrink-0" />
-            <span className="text-[#9aa6b4]">Order via Telegram:</span>
-            <a href="https://t.me/TopTechSale1" target="_blank" rel="noopener noreferrer"
-              className="text-[#ffbd27] hover:underline font-medium">Sale 1</a>
-            <span className="text-white/30">|</span>
-            <a href="https://t.me/TopTechSale2" target="_blank" rel="noopener noreferrer"
-              className="text-[#ffbd27] hover:underline font-medium">Sale 2</a>
-          </div>
-          <div className="text-xs text-[#9aa6b4] flex items-center gap-1">
-            <span>📞</span>
-            <span>092 626 092</span>
-            <span className="text-white/30 mx-0.5">|</span>
-            <span>069 800 577</span>
+      {/* Order strip: label, Telegram links and phones come from Admin → Site Info */}
+      {strip && (strip.telegram.length > 0 || strip.phones.length > 0) && (
+        <div className="mt-3 sm:mt-4 bg-[var(--cms-color-primary)] border-t border-white/10">
+          <div className="max-w-[1290px] mx-auto px-4 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-y-1 gap-x-3">
+            {strip.telegram.length > 0 && (
+              <div className="flex items-center gap-2 text-xs text-[#6b7785] flex-wrap">
+                <Send size={11} className="text-[#ffbd27] flex-shrink-0" />
+                {strip.label && <span className="text-[#9aa6b4]">{strip.label}</span>}
+                {strip.telegram.map((t, i) => (
+                  <span key={t.url} className="flex items-center gap-2">
+                    {i > 0 && <span className="text-white/30">|</span>}
+                    <a href={t.url} target="_blank" rel="noopener noreferrer"
+                      className="text-[#ffbd27] hover:underline font-medium">{t.label}</a>
+                  </span>
+                ))}
+              </div>
+            )}
+            {strip.phones.length > 0 && (
+              <div className="text-xs text-[#9aa6b4] flex items-center gap-1">
+                <span aria-hidden="true">📞</span>
+                {strip.phones.map((phone, i) => (
+                  <span key={phone} className="flex items-center gap-1">
+                    {i > 0 && <span className="text-white/30 mx-0.5">|</span>}
+                    <a href={telHref(phone)} className="hover:text-[#ffbd27] transition-colors">{phone}</a>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      )}
     </section>
   )
 }

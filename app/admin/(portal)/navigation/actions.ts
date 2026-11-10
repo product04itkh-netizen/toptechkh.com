@@ -1,10 +1,11 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { z } from 'zod'
 import { requireAdmin } from '@/lib/admin-session'
-import { rethrowFrameworkError } from '@/lib/action-errors'
+import { rethrowFrameworkError, errorMessage } from '@/lib/action-errors'
 
 const navItemSchema = z.object({
   type: z.enum(['custom_link', 'category', 'build_pc', 'promotion']),
@@ -35,10 +36,10 @@ export async function createNavItem(_: unknown, formData: FormData) {
 
     revalidatePath('/admin/navigation')
     revalidatePath('/')
-    return { success: true }
+    redirect('/admin/navigation?toast=success&msg=Navigation+item+created')
   } catch (e) {
     rethrowFrameworkError(e)
-    const msg = e instanceof Error ? e.message : 'Validation failed'
+    const msg = errorMessage(e, 'Validation failed')
     return { error: msg }
   }
 }
@@ -69,10 +70,10 @@ export async function updateNavItem(_: unknown, formData: FormData) {
 
     revalidatePath('/admin/navigation')
     revalidatePath('/')
-    return { success: true }
+    redirect('/admin/navigation?toast=success&msg=Navigation+item+updated')
   } catch (e) {
     rethrowFrameworkError(e)
-    const msg = e instanceof Error ? e.message : 'Validation failed'
+    const msg = errorMessage(e, 'Validation failed')
     return { error: msg }
   }
 }
@@ -120,7 +121,7 @@ export async function moveNavItem(id: number, direction: 'up' | 'down') {
     return { success: true }
   } catch (e) {
     rethrowFrameworkError(e)
-    const msg = e instanceof Error ? e.message : 'Reorder failed'
+    const msg = errorMessage(e, 'Reorder failed')
     return { error: msg }
   }
 }

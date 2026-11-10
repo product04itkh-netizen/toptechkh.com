@@ -25,7 +25,7 @@ export default async function NewSectionPage({ params }: Props) {
   if (catError) console.error('Categories fetch error:', catError)
 
   return (
-    <div className="p-6 max-w-3xl">
+    <div className="p-6">
       <div className="mb-6">
         <div className="text-xs text-[#818ea0] mb-1">
           <a href="/admin/cms" className="hover:text-[#041e42]">CMS</a>

@@ -19,7 +19,7 @@ export default function NewCmsPagePage() {
         <p className="text-sm text-[#818ea0] mt-0.5">Create a new page. Add sections after saving.</p>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6 max-w-lg">
+      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6">
         <form action={action} className="space-y-4">
           {state?.error && (
             <div className="text-sm text-[#ef262c] bg-red-50 border border-red-100 rounded-lg px-4 py-3">

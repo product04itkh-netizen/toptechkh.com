@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { brandSchema } from '@/lib/validation'
 import { requireAdmin } from '@/lib/admin-session'
-import { rethrowFrameworkError } from '@/lib/action-errors'
+import { rethrowFrameworkError, errorMessage } from '@/lib/action-errors'
 
 export async function createBrand(_: unknown, formData: FormData) {
   await requireAdmin()
@@ -24,7 +24,7 @@ export async function createBrand(_: unknown, formData: FormData) {
     redirect('/admin/brands?toast=success&msg=Brand+created')
   } catch (e) {
     rethrowFrameworkError(e)
-    const msg = e instanceof Error ? e.message : 'Brand validation failed'
+    const msg = errorMessage(e, 'Brand validation failed')
     return { error: msg }
   }
 }
@@ -48,7 +48,7 @@ export async function updateBrand(_: unknown, formData: FormData) {
     redirect('/admin/brands?toast=success&msg=Brand+updated')
   } catch (e) {
     rethrowFrameworkError(e)
-    const msg = e instanceof Error ? e.message : 'Brand validation failed'
+    const msg = errorMessage(e, 'Brand validation failed')
     return { error: msg }
   }
 }

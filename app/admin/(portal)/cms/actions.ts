@@ -7,6 +7,7 @@ import { slugify } from '@/lib/slug'
 import type { CmsSectionType, CmsSectionStyles } from '@/lib/cms-types'
 import { requireAdmin } from '@/lib/admin-session'
 import { rethrowFrameworkError } from '@/lib/action-errors'
+import { siteSettingsSchema, SITE_INFO_KEY } from '@/lib/site-settings-schema'
 
 // ── PAGES ────────────────────────────────────────────────────
 
@@ -328,4 +329,55 @@ export async function updateGlobalSettings(_: unknown, formData: FormData) {
   revalidatePath('/')
   revalidatePath('/admin/cms/settings')
   redirect('/admin/cms/settings?toast=success&msg=Settings+saved')
+}
+
+// ── SITE INFO (contact, footer, trust signals, shipping, home copy) ──────────
+
+/** "trustSignals.0.title" -> "Trust signals › item 1 › title" */
+function describeIssuePath(path: PropertyKey[]): string {
+  const names: Record<string, string> = {
+    brand: 'Brand', contact: 'Contact', trustSignals: 'Trust signals', shipping: 'Shipping', home: 'Homepage', footer: 'Footer',
+    tagline: 'tagline', social: 'social link', groups: 'contact group', phones: 'phone', telegram: 'Telegram link',
+    email: 'email', addressKm: 'Khmer address', addressEn: 'English address', mapEmbedUrl: 'map link',
+    icon: 'icon', title: 'title', subtitle: 'subtitle', freeThreshold: 'free-shipping minimum', flatFee: 'shipping fee',
+    categoriesTitle: 'categories title', categoriesSubtitle: 'categories subtitle', orderStripLabel: 'order strip label',
+    copyright: 'copyright text', legalLinks: 'footer link', label: 'label', url: 'link', short: 'short label',
+  }
+  // A number after a name is that item's position: ["phones", 0] -> "phone 1"
+  const parts: string[] = []
+  path.forEach((p, i) => {
+    if (typeof p === 'number') return
+    const base = names[String(p)] ?? String(p)
+    const next = path[i + 1]
+    parts.push(typeof next === 'number' ? `${base} ${next + 1}` : base)
+  })
+  return parts.join(' › ')
+}
+
+export async function updateSiteSettings(_: unknown, formData: FormData) {
+  await requireAdmin()
+
+  let raw: unknown
+  try {
+    raw = JSON.parse(String(formData.get('settings') ?? ''))
+  } catch {
+    return { error: 'Could not read the form. Reload the page and try again.' }
+  }
+
+  const parsed = siteSettingsSchema.safeParse(raw)
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0]
+    return { error: `${describeIssuePath(issue.path)}: ${issue.message}` }
+  }
+
+  const { error } = await supabaseAdmin
+    .from('cms_settings')
+    .upsert({ key: SITE_INFO_KEY, value: parsed.data, updated_at: new Date().toISOString() })
+
+  if (error) return { error: error.message }
+
+  // Footer, header strip, product pages and the cart all read this row
+  revalidatePath('/', 'layout')
+  revalidatePath('/admin/cms/site-info')
+  redirect('/admin/cms/site-info?toast=success&msg=Site+info+saved')
 }

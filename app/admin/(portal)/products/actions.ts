@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { productSchema } from '@/lib/validation'
 import { requireAdmin } from '@/lib/admin-session'
-import { rethrowFrameworkError } from '@/lib/action-errors'
+import { rethrowFrameworkError, errorMessage } from '@/lib/action-errors'
 
 function slugify(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
@@ -51,7 +51,7 @@ export async function createProduct(_: unknown, formData: FormData) {
   } catch (e) {
     rethrowFrameworkError(e)
     if (e instanceof Error && e.message === 'NEXT_REDIRECT') throw e
-    const msg = e instanceof Error ? e.message : 'Product validation failed'
+    const msg = errorMessage(e, 'Product validation failed')
     return { error: msg }
   }
 }
@@ -72,7 +72,7 @@ export async function updateProduct(_: unknown, formData: FormData) {
   } catch (e) {
     rethrowFrameworkError(e)
     if (e instanceof Error && e.message === 'NEXT_REDIRECT') throw e
-    return { error: e instanceof Error ? e.message : 'Validation failed' }
+    return { error: errorMessage(e, 'Validation failed') }
   }
 }
 

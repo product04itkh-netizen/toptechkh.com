@@ -32,7 +32,7 @@ export default async function EditNavItemPage({ params }: Props) {
   const navItem = item as NavItem
 
   return (
-    <div className="p-6 max-w-2xl">
+    <div className="p-6">
       <div className="mb-6">
         <div className="text-xs text-[#818ea0] mb-1">
           <a href="/admin/navigation" className="hover:text-[#041e42]">Navigation</a> / Edit Item

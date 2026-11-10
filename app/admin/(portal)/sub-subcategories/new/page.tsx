@@ -14,7 +14,7 @@ export default async function NewSubSubcategoryPage() {
         </div>
         <h1 className="text-2xl font-black text-[#021523]">Add Sub-subcategory</h1>
       </div>
-      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6 max-w-lg">
+      <div className="bg-white rounded-xl border border-[#e5e8ec] p-6">
         <SubSubcategoryForm action={createSubSubcategory} subcategories={subcategories} />
       </div>
     </div>

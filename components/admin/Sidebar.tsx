@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard, Package, Tag, Building2, LogOut, ChevronRight,
-  GalleryHorizontal, Layers, BookOpen, ListTree, Globe, Palette, Menu,
+  GalleryHorizontal, Layers, BookOpen, ListTree, Globe, Palette, Menu, Info,
 } from 'lucide-react'
 import { logoutAction } from '@/app/admin/login/actions'
 
@@ -23,14 +23,15 @@ const catalogItems = [
 const websiteItems = [
   { href: '/admin/cms',           label: 'CMS Pages',  icon: Globe },
   { href: '/admin/navigation',    label: 'Navigation', icon: Menu },
+  { href: '/admin/cms/site-info', label: 'Site Info',  icon: Info },
   { href: '/admin/cms/settings',  label: 'Site Style', icon: Palette },
 ]
 
 function isActive(href: string, pathname: string): boolean {
   if (href === '/admin/cms') {
-    // Active on /admin/cms and sub-pages — but NOT /admin/cms/settings
+    // Active on /admin/cms and sub-pages — but NOT /admin/cms/settings or /admin/cms/site-info
     return pathname === '/admin/cms' ||
-      (pathname.startsWith('/admin/cms/') && !pathname.startsWith('/admin/cms/settings'))
+      (pathname.startsWith('/admin/cms/') && !pathname.startsWith('/admin/cms/settings') && !pathname.startsWith('/admin/cms/site-info'))
   }
   return pathname === href || pathname.startsWith(href + '/')
 }
@@ -64,14 +65,13 @@ export default function AdminSidebar() {
         <Image src="/top-tech-logo.png" alt="Top Tech" width={34} height={34} className="rounded-full flex-shrink-0" />
         <div className="min-w-0">
           <div className="font-black text-sm leading-tight truncate">Top Tech</div>
-          <div className="text-[10px] text-white/50 leading-tight">Admin Portal</div>
+          <div className="text-[11px] text-white/50 leading-tight">Admin Portal</div>
         </div>
       </div>
 
       <nav className="flex-1 px-2 py-4 overflow-y-auto">
 
         {/* Catalog section */}
-        <p className="px-3 mb-1 text-[10px] font-bold uppercase tracking-widest text-white/30">Catalog</p>
         <div className="space-y-0.5 mb-4">
           {catalogItems.map(item => (
             <NavItem key={item.href} {...item} pathname={pathname} />
@@ -80,7 +80,6 @@ export default function AdminSidebar() {
 
         {/* Website section */}
         <div className="border-t border-white/10 pt-4">
-          <p className="px-3 mb-1 text-[10px] font-bold uppercase tracking-widest text-white/30">Website</p>
           <div className="space-y-0.5">
             {websiteItems.map(item => (
               <NavItem key={item.href} {...item} pathname={pathname} />

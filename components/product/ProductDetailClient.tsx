@@ -1,17 +1,37 @@
 ﻿'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { ShieldCheck, Truck, RotateCcw, ChevronLeft, ChevronRight, Copy, Check, Send } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Copy, Check, Send, ShoppingCart } from 'lucide-react'
 import { Product } from '@/lib/types'
 import Badge from '@/components/ui/Badge'
+import TrustIcon from '@/components/ui/TrustIcon'
+import { useCartStore } from '@/lib/cart-store'
+import type { TrustSignal } from '@/lib/site-settings-schema'
 
 interface ProductDetailClientProps {
   product: Product
+  /** Editable in Admin → Site Info */
+  trustSignals?: TrustSignal[]
 }
 
-export default function ProductDetailClient({ product }: ProductDetailClientProps) {
+const TRUST_GRID: Record<number, string> = {
+  1: 'grid-cols-1',
+  2: 'grid-cols-2',
+  3: 'grid-cols-3',
+  4: 'grid-cols-2 sm:grid-cols-4',
+}
+
+export default function ProductDetailClient({ product, trustSignals = [] }: ProductDetailClientProps) {
   const [activeImage, setActiveImage] = useState(0)
   const [copied, setCopied] = useState(false)
+  const [added, setAdded] = useState(false)
+  const addItem = useCartStore((s) => s.addItem)
+
+  const handleAddToCart = () => {
+    addItem(product)
+    setAdded(true)
+    setTimeout(() => setAdded(false), 2000)
+  }
   const [paused, setPaused] = useState(false)
   const pauseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -195,6 +215,20 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
           />
         )}
 
+        {/* Add to cart */}
+        <button
+          onClick={handleAddToCart}
+          disabled={product.stock_status === 'outofstock'}
+          className="w-full flex items-center justify-center gap-2 py-3 mb-4 bg-[var(--cms-color-primary)] hover:bg-[var(--cms-color-primary-hover)] disabled:bg-[#c8cdd5] disabled:cursor-not-allowed text-white font-bold rounded-lg text-sm transition-colors"
+        >
+          {added ? <Check size={16} /> : <ShoppingCart size={16} />}
+          {product.stock_status === 'outofstock'
+            ? 'Out of Stock'
+            : added
+              ? 'Added to Cart'
+              : `Add to Cart · $${displayPrice.toFixed(2)}`}
+        </button>
+
         {/* Share buttons */}
         <div className="flex flex-wrap gap-2 mb-4">
           <button
@@ -223,19 +257,17 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
         </div>
 
         {/* Trust signals */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-6 pt-6 border-t border-[#e5e8ec]">
-          {[
-            { icon: ShieldCheck, label: 'Warranty', sub: '1 Year Guarantee' },
-            { icon: Truck, label: 'Free Shipping', sub: 'Orders over $50' },
-            { icon: RotateCcw, label: 'Easy Returns', sub: '30-day return' },
-          ].map(({ icon: Icon, label, sub }) => (
-            <div key={label} className="flex flex-col items-center text-center gap-1 p-2 sm:p-3 bg-[#f2f3f5] rounded-lg">
-              <Icon size={18} className="text-[var(--cms-color-primary)]" />
-              <span className="text-[11px] sm:text-xs font-bold text-[#021523]">{label}</span>
-              <span className="text-[9px] sm:text-[11px] text-[#5d6b7b] leading-tight">{sub}</span>
-            </div>
-          ))}
-        </div>
+        {trustSignals.length > 0 && (
+          <div className={`grid ${TRUST_GRID[trustSignals.length] ?? 'grid-cols-2'} gap-2 sm:gap-3 mt-6 pt-6 border-t border-[#e5e8ec]`}>
+            {trustSignals.map(({ icon, title, subtitle }, i) => (
+              <div key={`${title}-${i}`} className="flex flex-col items-center text-center gap-1 p-2 sm:p-3 bg-[#f2f3f5] rounded-lg">
+                <TrustIcon name={icon} size={18} className="text-[var(--cms-color-primary)]" />
+                <span className="text-[11px] sm:text-xs font-bold text-[#021523]">{title}</span>
+                {subtitle && <span className="text-[11px] text-[#5d6b7b] leading-tight">{subtitle}</span>}
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Category */}
         {product.category && (

@@ -19,6 +19,9 @@ export const productSchema = z.object({
   subcategory_id: z.number().positive().nullable().optional(),
   sub_subcategory_id: z.number().positive().nullable().optional(),
   images: z.array(z.string().url()).optional().default([]),
+}).refine((p) => p.sale_price == null || p.sale_price < p.price, {
+  message: 'Sale price must be lower than the regular price (leave it empty for no sale)',
+  path: ['sale_price'],
 })
 
 export type ProductInput = z.infer<typeof productSchema>

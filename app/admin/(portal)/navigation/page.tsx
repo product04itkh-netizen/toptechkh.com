@@ -41,7 +41,7 @@ export default async function NavigationPage() {
   const list: NavItem[] = items ?? []
 
   return (
-    <div className="p-6 max-w-5xl">
+    <div className="p-6">
       <div className="flex items-start justify-between mb-6">
         <div>
           <div className="text-xs text-[#818ea0] mb-1">Admin / Navigation</div>
