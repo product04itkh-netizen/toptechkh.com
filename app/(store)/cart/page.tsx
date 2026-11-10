@@ -16,7 +16,7 @@ export default function CartPage() {
       <div className="max-w-[1290px] mx-auto px-4 py-16 text-center">
         <ShoppingBag size={64} className="mx-auto text-[#e5e8ec] mb-4" />
         <h1 className="text-2xl font-black text-[#021523] mb-2">Your cart is empty</h1>
-        <p className="text-[#818ea0] mb-8">Looks like you haven&apos;t added anything yet.</p>
+        <p className="text-[#5d6b7b] mb-8">Looks like you haven&apos;t added anything yet.</p>
         <Link href="/shop"><Button size="lg">Continue Shopping</Button></Link>
       </div>
     )
@@ -25,7 +25,7 @@ export default function CartPage() {
   return (
     <div className="max-w-[1290px] mx-auto px-4 py-6">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/shop" className="flex items-center gap-1 text-sm text-[#818ea0] hover:text-[#041e42]">
+        <Link href="/shop" className="flex items-center gap-1 text-sm text-[#5d6b7b] hover:text-[#041e42]">
           <ArrowLeft size={14} /> Continue Shopping
         </Link>
         <h1 className="text-2xl font-black text-[#021523]">Shopping Cart ({count})</h1>
@@ -55,11 +55,11 @@ export default function CartPage() {
                     <Link href={`/product/${product.slug}`}>
                       <h3 className="text-sm font-semibold text-[#021523] hover:text-[#0070dc] line-clamp-2">{product.name}</h3>
                     </Link>
-                    <button onClick={() => removeItem(product.id)} className="flex-shrink-0 text-[#818ea0] hover:text-[#ef262c]">
+                    <button onClick={() => removeItem(product.id)} className="flex-shrink-0 text-[#5d6b7b] hover:text-[#ef262c]">
                       <Trash2 size={16} />
                     </button>
                   </div>
-                  {product.brand && <p className="text-xs text-[#818ea0] mt-0.5">{product.brand.name}</p>}
+                  {product.brand && <p className="text-xs text-[#5d6b7b] mt-0.5">{product.brand.name}</p>}
                   <div className="flex items-center justify-between mt-3">
                     <div className="flex items-center border border-[#e5e8ec] rounded-md overflow-hidden">
                       <button onClick={() => updateQuantity(product.id, quantity - 1)} className="px-2.5 py-1 hover:bg-[#f2f3f5] font-bold text-sm">−</button>
@@ -68,25 +68,25 @@ export default function CartPage() {
                     </div>
                     <div className="text-right">
                       <div className="font-bold text-[#021523]">${(price * quantity).toFixed(2)}</div>
-                      {quantity > 1 && <div className="text-xs text-[#818ea0]">${price.toFixed(2)} each</div>}
+                      {quantity > 1 && <div className="text-xs text-[#5d6b7b]">${price.toFixed(2)} each</div>}
                     </div>
                   </div>
                 </div>
               </div>
             )
           })}
-          <button onClick={clearCart} className="text-sm text-[#818ea0] hover:text-[#ef262c]">Clear cart</button>
+          <button onClick={clearCart} className="text-sm text-[#5d6b7b] hover:text-[#ef262c]">Clear cart</button>
         </div>
         <div className="lg:col-span-1">
           <div className="bg-white border border-[#e5e8ec] rounded-lg p-5 sticky top-24">
             <h2 className="font-bold text-[#021523] mb-4">Order Summary</h2>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-[#818ea0]">Subtotal ({count} items)</span>
+                <span className="text-[#5d6b7b]">Subtotal ({count} items)</span>
                 <span className="font-semibold">${total.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#818ea0]">Shipping</span>
+                <span className="text-[#5d6b7b]">Shipping</span>
                 <span className="font-semibold text-[#00a046]">{total >= 50 ? 'Free' : '$5.00'}</span>
               </div>
             </div>

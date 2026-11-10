@@ -82,23 +82,23 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Brand */}
         {product.brand && (
-          <p className="text-[10px] font-bold text-[var(--cms-color-primary)] uppercase tracking-wider mb-1">
+          <p className="text-[11px] font-bold text-[var(--cms-color-primary)] uppercase tracking-wider mb-1">
             {product.brand.name}
           </p>
         )}
 
         {/* Model name */}
         <Link href={`/product/${product.slug}`}>
-          <h3 className="text-sm font-semibold text-[#021523] line-clamp-2 hover:text-[var(--cms-color-primary)] transition-colors leading-snug mb-2">
+          <h2 className="text-base font-semibold text-[#021523] line-clamp-2 text-balance hover:text-[var(--cms-color-primary)] transition-colors leading-snug mb-2">
             {product.name}
-          </h3>
+          </h2>
         </Link>
 
         {/* Specs bullets */}
         {bullets.length > 0 && (
           <ul className="flex-1 mb-3 space-y-0.5">
             {bullets.map((b, i) => (
-              <li key={i} className="flex items-start gap-1.5 text-[11px] text-[#555] leading-snug">
+              <li key={i} className="flex items-start gap-1.5 text-xs text-[#555] leading-snug">
                 <span className="mt-[3px] w-1 h-1 rounded-full bg-[var(--cms-color-primary)] flex-shrink-0" />
                 <span className="line-clamp-1">{b}</span>
               </li>
@@ -111,7 +111,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Sale original price */}
         {product.sale_price && (
-          <p className="text-[11px] text-[#818ea0] line-through mb-1">
+          <p className="text-xs text-[#5d6b7b] line-through mb-1">
             ${product.price.toFixed(2)}
           </p>
         )}

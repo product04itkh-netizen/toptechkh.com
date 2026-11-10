@@ -116,16 +116,16 @@ export default function HeroBannerCarousel({ slides }: { slides: BannerSlide[] }
       {/* Telegram order strip */}
       <div className="mt-3 sm:mt-4 bg-[var(--cms-color-primary)] border-t border-white/10">
         <div className="max-w-[1290px] mx-auto px-4 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-y-1 gap-x-3">
-          <div className="flex items-center gap-2 text-xs text-[#b0bec5] flex-wrap">
+          <div className="flex items-center gap-2 text-xs text-[#6b7785] flex-wrap">
             <Send size={11} className="text-[#ffbd27] flex-shrink-0" />
-            <span className="text-[#818ea0]">Order via Telegram:</span>
+            <span className="text-[#9aa6b4]">Order via Telegram:</span>
             <a href="https://t.me/TopTechSale1" target="_blank" rel="noopener noreferrer"
               className="text-[#ffbd27] hover:underline font-medium">Sale 1</a>
             <span className="text-white/30">|</span>
             <a href="https://t.me/TopTechSale2" target="_blank" rel="noopener noreferrer"
               className="text-[#ffbd27] hover:underline font-medium">Sale 2</a>
           </div>
-          <div className="text-xs text-[#818ea0] flex items-center gap-1">
+          <div className="text-xs text-[#9aa6b4] flex items-center gap-1">
             <span>📞</span>
             <span>092 626 092</span>
             <span className="text-white/30 mx-0.5">|</span>

@@ -3,6 +3,8 @@
 import { revalidatePath } from 'next/cache'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { z } from 'zod'
+import { requireAdmin } from '@/lib/admin-session'
+import { rethrowFrameworkError } from '@/lib/action-errors'
 
 const navItemSchema = z.object({
   type: z.enum(['custom_link', 'category', 'build_pc', 'promotion']),
@@ -14,6 +16,7 @@ const navItemSchema = z.object({
 })
 
 export async function createNavItem(_: unknown, formData: FormData) {
+  await requireAdmin()
   try {
     const type = formData.get('type') as string
     const data: any = {
@@ -34,12 +37,14 @@ export async function createNavItem(_: unknown, formData: FormData) {
     revalidatePath('/')
     return { success: true }
   } catch (e) {
+    rethrowFrameworkError(e)
     const msg = e instanceof Error ? e.message : 'Validation failed'
     return { error: msg }
   }
 }
 
 export async function updateNavItem(_: unknown, formData: FormData) {
+  await requireAdmin()
   try {
     const id = parseInt(formData.get('id') as string)
     if (isNaN(id)) throw new Error('Invalid item ID')
@@ -66,12 +71,14 @@ export async function updateNavItem(_: unknown, formData: FormData) {
     revalidatePath('/')
     return { success: true }
   } catch (e) {
+    rethrowFrameworkError(e)
     const msg = e instanceof Error ? e.message : 'Validation failed'
     return { error: msg }
   }
 }
 
 export async function deleteNavItem(id: number) {
+  await requireAdmin()
   const { error } = await supabaseAdmin.from('navigation_items').delete().eq('id', id)
 
   revalidatePath('/admin/navigation')
@@ -82,6 +89,7 @@ export async function deleteNavItem(id: number) {
 }
 
 export async function moveNavItem(id: number, direction: 'up' | 'down') {
+  await requireAdmin()
   try {
     const { data: items, error: fetchError } = await supabaseAdmin
       .from('navigation_items')
@@ -111,6 +119,7 @@ export async function moveNavItem(id: number, direction: 'up' | 'down') {
     revalidatePath('/')
     return { success: true }
   } catch (e) {
+    rethrowFrameworkError(e)
     const msg = e instanceof Error ? e.message : 'Reorder failed'
     return { error: msg }
   }

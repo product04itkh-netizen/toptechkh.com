@@ -18,6 +18,12 @@ export default async function NewSectionPage({ params }: Props) {
   if (error) console.error('CMS page fetch error:', error)
   if (!page) notFound()
 
+  const { data: categories, error: catError } = await supabaseAdmin
+    .from('categories')
+    .select('slug, name')
+    .order('name')
+  if (catError) console.error('Categories fetch error:', catError)
+
   return (
     <div className="p-6 max-w-3xl">
       <div className="mb-6">
@@ -35,6 +41,7 @@ export default async function NewSectionPage({ params }: Props) {
         action={createSection as any}
         pageId={id}
         mode="new"
+        categories={categories ?? []}
       />
     </div>
   )

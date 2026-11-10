@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { productSchema } from '@/lib/validation'
+import { requireAdmin } from '@/lib/admin-session'
+import { rethrowFrameworkError } from '@/lib/action-errors'
 
 function slugify(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
@@ -37,6 +39,7 @@ function parseForm(formData: FormData) {
 }
 
 export async function createProduct(_: unknown, formData: FormData) {
+  await requireAdmin()
   try {
     const payload = parseForm(formData)
     const { error } = await supabaseAdmin.from('products').insert(payload)
@@ -46,6 +49,7 @@ export async function createProduct(_: unknown, formData: FormData) {
     revalidatePath('/shop')
     redirect('/admin/products?toast=success&msg=Product+created')
   } catch (e) {
+    rethrowFrameworkError(e)
     if (e instanceof Error && e.message === 'NEXT_REDIRECT') throw e
     const msg = e instanceof Error ? e.message : 'Product validation failed'
     return { error: msg }
@@ -53,6 +57,7 @@ export async function createProduct(_: unknown, formData: FormData) {
 }
 
 export async function updateProduct(_: unknown, formData: FormData) {
+  await requireAdmin()
   try {
     const id = parseInt(formData.get('id') as string)
     if (isNaN(id)) throw new Error('Invalid product ID')
@@ -65,12 +70,14 @@ export async function updateProduct(_: unknown, formData: FormData) {
     revalidatePath('/shop')
     redirect('/admin/products?toast=success&msg=Product+updated')
   } catch (e) {
+    rethrowFrameworkError(e)
     if (e instanceof Error && e.message === 'NEXT_REDIRECT') throw e
     return { error: e instanceof Error ? e.message : 'Validation failed' }
   }
 }
 
 export async function deleteProduct(id: number) {
+  await requireAdmin()
   const { error } = await supabaseAdmin.from('products').delete().eq('id', id)
   revalidatePath('/admin/products')
   revalidatePath('/')

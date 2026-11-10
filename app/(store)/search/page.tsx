@@ -25,14 +25,14 @@ async function SearchResults({ query, category }: { query: string; category?: st
   const products = await searchProducts(query, category)
   return (
     <div>
-      <p className="text-sm text-[#818ea0] mb-6">
+      <p className="text-sm text-[#5d6b7b] mb-6">
         {products.length > 0 ? `Found ${products.length} results for "${query}"` : `No results found for "${query}"`}
       </p>
       {products.length === 0 ? (
         <div className="text-center py-16">
           <div className="text-5xl mb-4">🔍</div>
           <h2 className="text-xl font-bold text-[#021523] mb-2">No products found</h2>
-          <p className="text-[#818ea0]">Try different keywords or browse our categories.</p>
+          <p className="text-[#5d6b7b]">Try different keywords or browse our categories.</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -47,7 +47,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q = '', category } = await searchParams
   return (
     <div className="max-w-[1290px] mx-auto px-4 py-6">
-      <div className="text-xs text-[#818ea0] mb-4">
+      <div className="text-xs text-[#5d6b7b] mb-4">
         <a href="/" className="hover:text-[#041e42]">Home</a>{' / '}
         <span className="text-[#021523]">Search</span>
       </div>
@@ -72,7 +72,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       ) : (
         <div className="text-center py-16">
           <div className="text-5xl mb-4">🔍</div>
-          <p className="text-[#818ea0]">Type something in the search bar above to find products.</p>
+          <p className="text-[#5d6b7b]">Type something in the search bar above to find products.</p>
         </div>
       )}
     </div>

@@ -331,18 +331,18 @@ export default function PCBuilder({ products }: { products: Product[] }) {
                     {hasIssue && <AlertTriangle size={13} className="text-amber-500 flex-shrink-0" />}
                   </h2>
                   {chosenPart && (
-                    <p className="text-[11px] text-green-600 font-semibold flex items-center gap-1">
+                    <p className="text-xs text-green-600 font-semibold flex items-center gap-1">
                       <Check size={10} /> {chosenPart.name}
                     </p>
                   )}
                 </div>
                 {chosenPart && (
-                  <button onClick={() => clearSlot(slot.id)} className="text-[#818ea0] hover:text-[var(--cms-color-accent)] transition-colors p-1" title="Remove">
+                  <button onClick={() => clearSlot(slot.id)} className="text-[#5d6b7b] hover:text-[var(--cms-color-accent)] transition-colors p-1" title="Remove">
                     <Trash2 size={14} />
                   </button>
                 )}
                 {parts.length === 0 && (
-                  <span className="text-xs text-[#c5ccd5] italic">No parts in stock</span>
+                  <span className="text-xs text-[#6b7785] italic">No parts in stock</span>
                 )}
               </div>
 
@@ -388,21 +388,21 @@ export default function PCBuilder({ products }: { products: Product[] }) {
                             {(product.brand as any).name}
                           </p>
                         )}
-                        <p className="text-[11px] font-semibold text-[#021523] line-clamp-2 leading-snug mb-1.5 min-h-[2.5em]">
+                        <p className="text-xs font-semibold text-[#021523] line-clamp-2 leading-snug mb-1.5 min-h-[2.5em]">
                           {product.name}
                         </p>
 
                         <div className="flex items-center justify-between gap-1">
                           <p className="text-sm font-black text-[var(--cms-color-primary)]">${price.toFixed(2)}</p>
                           {product.sale_price && (
-                            <p className="text-[10px] text-[#818ea0] line-through">${product.price.toFixed(2)}</p>
+                            <p className="text-[11px] text-[#5d6b7b] line-through">${product.price.toFixed(2)}</p>
                           )}
                         </div>
 
-                        <div className={`mt-1.5 text-center text-[10px] font-bold rounded-md py-1 transition-colors ${
+                        <div className={`mt-1.5 text-center text-[11px] font-bold rounded-md py-1 transition-colors ${
                           isSelected
                             ? 'bg-[var(--cms-color-primary)] text-white'
-                            : 'bg-[#f2f3f5] text-[#818ea0]'
+                            : 'bg-[#f2f3f5] text-[#5d6b7b]'
                         }`}>
                           {isSelected ? '✓ Selected' : 'Select'}
                         </div>
@@ -416,7 +416,7 @@ export default function PCBuilder({ products }: { products: Product[] }) {
         })}
 
         {products.length === 0 && (
-          <div className="text-center py-16 text-[#818ea0]">
+          <div className="text-center py-16 text-[#5d6b7b]">
             <Wrench size={40} className="mx-auto mb-3 opacity-30" />
             <p className="font-semibold">No components found.</p>
             <p className="text-sm mt-1">Add products to the &quot;Components&quot; category to build a PC.</p>
@@ -458,22 +458,22 @@ export default function PCBuilder({ products }: { products: Product[] }) {
                 <div key={slot.id} className={`flex items-center gap-2.5 px-4 py-2.5 ${hasIssue ? 'bg-amber-50' : ''}`}>
                   <span className="text-base flex-shrink-0">{slot.icon}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] text-[#818ea0] font-semibold uppercase tracking-wider">{slot.label}</p>
+                    <p className="text-[11px] text-[#5d6b7b] font-semibold uppercase tracking-wider">{slot.label}</p>
                     {part ? (
                       <div className="flex items-start justify-between gap-1 mt-0.5">
-                        <p className={`text-[11px] font-semibold line-clamp-1 flex-1 ${hasIssue ? 'text-amber-700' : 'text-[#021523]'}`}>
+                        <p className={`text-xs font-semibold line-clamp-1 flex-1 ${hasIssue ? 'text-amber-700' : 'text-[#021523]'}`}>
                           {part.name}
                         </p>
-                        <p className="text-[11px] font-black text-[var(--cms-color-primary)] flex-shrink-0 ml-1">
+                        <p className="text-xs font-black text-[var(--cms-color-primary)] flex-shrink-0 ml-1">
                           ${(part.sale_price ?? part.price).toFixed(2)}
                         </p>
                       </div>
                     ) : (
-                      <p className="text-[11px] text-[#c5ccd5] mt-0.5">Not selected</p>
+                      <p className="text-xs text-[#6b7785] mt-0.5">Not selected</p>
                     )}
                   </div>
                   {part && (
-                    <button onClick={() => clearSlot(slot.id)} className="text-[#c5ccd5] hover:text-[var(--cms-color-accent)] flex-shrink-0 transition-colors">
+                    <button onClick={() => clearSlot(slot.id)} className="text-[#6b7785] hover:text-[var(--cms-color-accent)] flex-shrink-0 transition-colors">
                       <Trash2 size={12} />
                     </button>
                   )}
@@ -485,11 +485,11 @@ export default function PCBuilder({ products }: { products: Product[] }) {
           {/* Compatibility warnings */}
           {compatIssues.length > 0 && (
             <div className="border-t border-amber-200 bg-amber-50 px-4 py-3 space-y-2">
-              <p className="text-[11px] font-bold text-amber-700 flex items-center gap-1.5">
+              <p className="text-xs font-bold text-amber-700 flex items-center gap-1.5">
                 <AlertTriangle size={11} /> Compatibility Issues
               </p>
               {compatIssues.map((issue, i) => (
-                <p key={i} className="text-[10px] text-amber-700 leading-snug">
+                <p key={i} className="text-[11px] text-amber-700 leading-snug">
                   ⚠ {issue.message}
                 </p>
               ))}
@@ -498,7 +498,7 @@ export default function PCBuilder({ products }: { products: Product[] }) {
 
           {compatIssues.length === 0 && selectedParts.length >= 2 && (
             <div className="border-t border-green-100 bg-green-50 px-4 py-2.5">
-              <p className="text-[11px] font-semibold text-green-700 flex items-center gap-1.5">
+              <p className="text-xs font-semibold text-green-700 flex items-center gap-1.5">
                 <Check size={11} /> Parts look compatible
               </p>
             </div>
@@ -530,7 +530,7 @@ export default function PCBuilder({ products }: { products: Product[] }) {
             {selectedParts.length > 0 && (
               <button
                 onClick={() => setSelected({})}
-                className="w-full text-xs text-[#818ea0] hover:text-[var(--cms-color-accent)] transition-colors"
+                className="w-full text-xs text-[#5d6b7b] hover:text-[var(--cms-color-accent)] transition-colors"
               >
                 Clear build
               </button>

@@ -108,8 +108,9 @@ export interface SpacerContent {
 export interface ProductGridContent {
   title?: string
   subtitle?: string
-  queryType?: 'coming_soon' | 'new_arrivals' | 'on_sale' | 'featured' | 'category'
+  queryType?: 'coming_soon' | 'new_arrivals' | 'on_sale' | 'featured' | 'category' | 'products'
   categorySlug?: string
+  productIds?: string  // comma-separated product ids, used when queryType === 'products'
   limit?: string
   viewAllUrl?: string
   viewAllLabel?: string

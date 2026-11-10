@@ -31,10 +31,10 @@ export default async function Footer() {
               <Image src="/top-tech-logo.png" alt="Top Tech Computer" width={40} height={40} className="rounded-full" />
               <div>
                 <div className="font-black text-white text-base leading-none">Top Tech</div>
-                <div className="text-[10px] text-[#818ea0] leading-none font-medium tracking-wider uppercase">Computer</div>
+                <div className="text-[11px] text-[#9aa6b4] leading-none font-medium tracking-wider uppercase">Computer</div>
               </div>
             </div>
-            <p className="text-[#818ea0] text-xs leading-relaxed mb-3">
+            <p className="text-[#9aa6b4] text-xs leading-relaxed mb-3">
               Phnom Penh's leading electronics store. Quality tech at the best prices.
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -44,7 +44,7 @@ export default async function Footer() {
                 { label: 'Telegram', href: 'https://t.me/top_techcomputer' },
               ].map(({ label, href }) => (
                 <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-                  className="text-[11px] text-[#818ea0] hover:text-[#ffbd27] border border-[var(--cms-color-primary-hover)] px-2 py-1 rounded transition-colors">
+                  className="text-xs text-[#9aa6b4] hover:text-[#ffbd27] border border-[var(--cms-color-primary-hover)] px-2 py-1 rounded transition-colors">
                   {label}
                 </a>
               ))}
@@ -55,37 +55,37 @@ export default async function Footer() {
           <div className="lg:col-span-2 text-center">
             <h4 className="font-bold text-white mb-3 text-xs uppercase tracking-wider">Contact Us</h4>
 
-            <p className="text-[#ffbd27] text-[10px] font-bold uppercase tracking-wider mb-1.5">Sale Showroom</p>
+            <p className="text-[#ffbd27] text-[11px] font-bold uppercase tracking-wider mb-1.5">Sale Showroom</p>
             <div className="space-y-1 mb-3">
-              <a href="tel:092626092" className="flex items-center justify-center gap-1.5 text-xs text-[#818ea0] hover:text-[#ffbd27] transition-colors">
+              <a href="tel:092626092" className="flex items-center justify-center gap-1.5 text-xs text-[#9aa6b4] hover:text-[#ffbd27] transition-colors">
                 <Phone size={10} /> 092 626 092
               </a>
-              <a href="tel:069800577" className="flex items-center justify-center gap-1.5 text-xs text-[#818ea0] hover:text-[#ffbd27] transition-colors">
+              <a href="tel:069800577" className="flex items-center justify-center gap-1.5 text-xs text-[#9aa6b4] hover:text-[#ffbd27] transition-colors">
                 <Phone size={10} /> 069 800 577
               </a>
-              <p className="text-[10px] text-[#516070] uppercase tracking-wider flex items-center justify-center gap-1 pt-0.5">
+              <p className="text-[11px] text-[#8d9aab] uppercase tracking-wider flex items-center justify-center gap-1 pt-0.5">
                 <Send size={9} /> Telegram
               </p>
-              <a href="https://t.me/TopTechSale1" target="_blank" rel="noopener noreferrer" className="block text-xs text-[#818ea0] hover:text-[#ffbd27] transition-colors">
+              <a href="https://t.me/TopTechSale1" target="_blank" rel="noopener noreferrer" className="block text-xs text-[#9aa6b4] hover:text-[#ffbd27] transition-colors">
                 Top Tech Sale 1
               </a>
-              <a href="https://t.me/TopTechSale2" target="_blank" rel="noopener noreferrer" className="block text-xs text-[#818ea0] hover:text-[#ffbd27] transition-colors">
+              <a href="https://t.me/TopTechSale2" target="_blank" rel="noopener noreferrer" className="block text-xs text-[#9aa6b4] hover:text-[#ffbd27] transition-colors">
                 Top Tech Sale 2
               </a>
             </div>
 
-            <p className="text-[#ffbd27] text-[10px] font-bold uppercase tracking-wider mb-1.5">Top Tech Service</p>
+            <p className="text-[#ffbd27] text-[11px] font-bold uppercase tracking-wider mb-1.5">Top Tech Service</p>
             <div className="space-y-1">
-              <a href="tel:092577092" className="flex items-center justify-center gap-1.5 text-xs text-[#818ea0] hover:text-[#ffbd27] transition-colors">
+              <a href="tel:092577092" className="flex items-center justify-center gap-1.5 text-xs text-[#9aa6b4] hover:text-[#ffbd27] transition-colors">
                 <Phone size={10} /> 092 577 092
               </a>
-              <a href="tel:016808777" className="flex items-center justify-center gap-1.5 text-xs text-[#818ea0] hover:text-[#ffbd27] transition-colors">
+              <a href="tel:016808777" className="flex items-center justify-center gap-1.5 text-xs text-[#9aa6b4] hover:text-[#ffbd27] transition-colors">
                 <Phone size={10} /> 016 808 777
               </a>
-              <p className="text-[10px] text-[#516070] uppercase tracking-wider flex items-center justify-center gap-1 pt-0.5">
+              <p className="text-[11px] text-[#8d9aab] uppercase tracking-wider flex items-center justify-center gap-1 pt-0.5">
                 <Send size={9} /> Telegram
               </p>
-              <a href="https://t.me/TopTechService" target="_blank" rel="noopener noreferrer" className="block text-xs text-[#818ea0] hover:text-[#ffbd27] transition-colors">
+              <a href="https://t.me/TopTechService" target="_blank" rel="noopener noreferrer" className="block text-xs text-[#9aa6b4] hover:text-[#ffbd27] transition-colors">
                 Top Tech Service
               </a>
             </div>
@@ -94,19 +94,19 @@ export default async function Footer() {
           {/* ── Address ── */}
           <div className="lg:col-span-3">
             <h4 className="font-bold text-white mb-3 text-xs uppercase tracking-wider text-center">Address</h4>
-            <div className="flex items-start gap-1.5 text-[#818ea0] mb-3">
+            <div className="flex items-start gap-1.5 text-[#9aa6b4] mb-3">
               <MapPin size={11} className="mt-0.5 flex-shrink-0 text-[#ffbd27]" />
               <div className="space-y-1.5">
-                <p className="leading-relaxed text-[11px]">
+                <p className="leading-relaxed text-xs">
                   ផ្ទះលេខ 275, ផ្លូវ កម្ពុជាក្រោម សង្កាត់មិត្តភាព ខណ្ឌ៧មករា រាជធានីភ្នំពេញ
                 </p>
-                <p className="leading-relaxed text-[11px]">
+                <p className="leading-relaxed text-xs">
                   275Eo, Street 128, Kampuchea Krom Blvd, Phnom Penh.
                 </p>
               </div>
             </div>
             <a href="mailto:toptechcomputerkh@gmail.com"
-              className="flex items-center gap-1.5 text-xs text-[#818ea0] hover:text-[#ffbd27] transition-colors">
+              className="flex items-center gap-1.5 text-xs text-[#9aa6b4] hover:text-[#ffbd27] transition-colors">
               <Mail size={10} className="flex-shrink-0" />
               <span className="truncate">toptechcomputerkh@gmail.com</span>
             </a>
@@ -118,7 +118,7 @@ export default async function Footer() {
             <ul className="space-y-1.5">
               {shopLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-xs text-[#818ea0] hover:text-[#ffbd27] transition-colors whitespace-nowrap">
+                  <Link href={link.href} className="text-xs text-[#9aa6b4] hover:text-[#ffbd27] transition-colors whitespace-nowrap">
                     {link.label}
                   </Link>
                 </li>
@@ -150,10 +150,10 @@ export default async function Footer() {
 
       <div className="border-t border-[#0a2540]">
         <div className="max-w-[1290px] mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-2">
-          <p className="text-[#818ea0] text-xs">© 2024 Top Tech Computer. All rights reserved.</p>
+          <p className="text-[#9aa6b4] text-xs">© 2024 Top Tech Computer. All rights reserved.</p>
           <div className="flex gap-4">
-            <Link href="/privacy" className="text-xs text-[#818ea0] hover:text-[#ffbd27]">Privacy</Link>
-            <Link href="/terms" className="text-xs text-[#818ea0] hover:text-[#ffbd27]">Terms</Link>
+            <Link href="/privacy" className="text-xs text-[#9aa6b4] hover:text-[#ffbd27]">Privacy</Link>
+            <Link href="/terms" className="text-xs text-[#9aa6b4] hover:text-[#ffbd27]">Terms</Link>
           </div>
         </div>
       </div>

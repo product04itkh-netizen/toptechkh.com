@@ -4,8 +4,11 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { brandSchema } from '@/lib/validation'
+import { requireAdmin } from '@/lib/admin-session'
+import { rethrowFrameworkError } from '@/lib/action-errors'
 
 export async function createBrand(_: unknown, formData: FormData) {
+  await requireAdmin()
   try {
     const data = {
       name: formData.get('name') as string,
@@ -20,12 +23,14 @@ export async function createBrand(_: unknown, formData: FormData) {
     revalidatePath('/shop')
     redirect('/admin/brands?toast=success&msg=Brand+created')
   } catch (e) {
+    rethrowFrameworkError(e)
     const msg = e instanceof Error ? e.message : 'Brand validation failed'
     return { error: msg }
   }
 }
 
 export async function updateBrand(_: unknown, formData: FormData) {
+  await requireAdmin()
   try {
     const id = parseInt(formData.get('id') as string)
     if (isNaN(id)) throw new Error('Invalid brand ID')
@@ -42,12 +47,14 @@ export async function updateBrand(_: unknown, formData: FormData) {
     revalidatePath('/shop')
     redirect('/admin/brands?toast=success&msg=Brand+updated')
   } catch (e) {
+    rethrowFrameworkError(e)
     const msg = e instanceof Error ? e.message : 'Brand validation failed'
     return { error: msg }
   }
 }
 
 export async function deleteBrand(id: number) {
+  await requireAdmin()
   const { error } = await supabaseAdmin.from('brands').delete().eq('id', id)
   revalidatePath('/admin/brands')
   revalidatePath('/')

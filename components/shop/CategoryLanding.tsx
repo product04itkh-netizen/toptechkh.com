@@ -46,12 +46,12 @@ export default function CategoryLanding({ category, brandGroups, totalProducts, 
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-r from-[#021523]/90 via-[#021523]/50 to-transparent flex flex-col justify-center px-5 sm:px-8">
-          <p className="text-[#ffbd27] text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-1 sm:mb-2">Browse</p>
+          <p className="text-[#ffbd27] text-[11px] sm:text-xs font-bold uppercase tracking-widest mb-1 sm:mb-2">Browse</p>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight">{category.name}</h1>
           {category.description && (
             <p className="hidden sm:block text-white/60 text-sm mt-2 max-w-md">{category.description}</p>
           )}
-          <p className="text-white/50 text-[10px] sm:text-xs mt-1 sm:mt-3">{totalProducts} products · {brandGroups.length} brands</p>
+          <p className="text-white/50 text-[11px] sm:text-xs mt-1 sm:mt-3">{totalProducts} products · {brandGroups.length} brands</p>
         </div>
       </div>
 
@@ -84,7 +84,7 @@ export default function CategoryLanding({ category, brandGroups, totalProducts, 
                     )}
                     <div className="absolute inset-0 flex items-center justify-between px-4 sm:px-6">
                       <div>
-                        <p className="text-white/50 text-[9px] sm:text-[10px] uppercase tracking-widest font-bold mb-0.5">Brand</p>
+                        <p className="text-white/50 text-[9px] sm:text-[11px] uppercase tracking-widest font-bold mb-0.5">Brand</p>
                         <h2 className="text-xl sm:text-2xl font-black text-white">{brand?.name ?? 'Other'}</h2>
                         <p className="text-white/50 text-xs mt-0.5">{products.length} products</p>
                       </div>
@@ -113,7 +113,7 @@ export default function CategoryLanding({ category, brandGroups, totalProducts, 
               {remaining > 0 && (
                 <button
                   onClick={() => toggle(key)}
-                  className="mt-5 w-full py-3 rounded-xl text-sm font-semibold transition-all border border-dashed border-[#c5ccd5] text-[#818ea0] hover:border-[var(--cms-color-primary)] hover:text-[var(--cms-color-primary)] hover:bg-[#f8f9ff]"
+                  className="mt-5 w-full py-3 rounded-xl text-sm font-semibold transition-all border border-dashed border-[#c5ccd5] text-[#5d6b7b] hover:border-[var(--cms-color-primary)] hover:text-[var(--cms-color-primary)] hover:bg-[#f8f9ff]"
                 >
                   {isExp
                     ? 'Show less'

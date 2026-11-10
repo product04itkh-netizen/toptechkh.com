@@ -3,35 +3,54 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { slugify } from '@/lib/slug'
 import type { CmsSectionType, CmsSectionStyles } from '@/lib/cms-types'
+import { requireAdmin } from '@/lib/admin-session'
+import { rethrowFrameworkError } from '@/lib/action-errors'
 
 // ── PAGES ────────────────────────────────────────────────────
 
 export async function createPage(_: unknown, formData: FormData) {
-  const title = (formData.get('title') as string).trim()
-  const slug = (formData.get('slug') as string).trim()
-  const status = formData.get('status') as 'draft' | 'published'
+  await requireAdmin()
+  const title = ((formData.get('title') as string) ?? '').trim()
+  // Slugs are always normalised server-side: the browser pattern check is not enough
+  const slug = slugify((formData.get('slug') as string) ?? '')
+  const status = (formData.get('status') as 'draft' | 'published') ?? 'draft'
 
-  if (!title || !slug) return { error: 'Title and slug are required.' }
+  if (!title) return { error: 'Title is required.' }
+  if (!slug) return { error: 'Slug must contain at least one letter or number (e.g. about-us).' }
 
   const { error } = await supabaseAdmin
     .from('cms_pages')
-    .insert({ title, slug, status: status ?? 'draft' })
+    .insert({ title, slug, status })
 
   if (error) return { error: error.message }
 
   revalidatePath('/admin/cms')
   revalidatePath('/')
+  revalidatePath(`/pages/${slug}`)
   redirect('/admin/cms?toast=success&msg=Page+created')
 }
 
 export async function updatePage(_: unknown, formData: FormData) {
+  await requireAdmin()
   const id = parseInt(formData.get('id') as string)
-  const title = (formData.get('title') as string).trim()
-  const slug = (formData.get('slug') as string).trim()
-  const status = formData.get('status') as 'draft' | 'published'
+  const title = ((formData.get('title') as string) ?? '').trim()
+  const slug = slugify((formData.get('slug') as string) ?? '')
+  const status = (formData.get('status') as 'draft' | 'published') ?? 'draft'
 
-  if (!title || !slug) return { error: 'Title and slug are required.' }
+  if (isNaN(id)) return { error: 'Invalid page ID.' }
+  if (!title) return { error: 'Title is required.' }
+  if (!slug) return { error: 'Slug must contain at least one letter or number (e.g. about-us).' }
+
+  const { data: before, error: fetchError } = await supabaseAdmin
+    .from('cms_pages')
+    .select('slug')
+    .eq('id', id)
+    .maybeSingle()
+
+  if (fetchError) return { error: fetchError.message }
+  if (!before) return { error: 'Page not found.' }
 
   const { error } = await supabaseAdmin
     .from('cms_pages')
@@ -41,11 +60,36 @@ export async function updatePage(_: unknown, formData: FormData) {
   if (error) return { error: error.message }
 
   revalidatePath('/admin/cms')
+  revalidatePath(`/admin/cms/${id}`)
   revalidatePath('/')
+  revalidatePath(`/pages/${slug}`)
+  revalidatePath(`/pages/${before.slug}`)  // old URL must stop serving cached content
   redirect('/admin/cms?toast=success&msg=Page+updated')
 }
 
+/** Product search for the CMS "Specific Products" picker. Matches name or SKU. */
+export async function searchProducts(query: string): Promise<{ id: number; name: string; sku: string | null }[]> {
+  await requireAdmin()
+  // Strip characters that have meaning in PostgREST filter syntax
+  const q = (query ?? '').replace(/[%_,()*]/g, ' ').trim()
+  if (q.length < 2) return []
+
+  // Every word must match the name or SKU, in any order: "TUF A15" finds "ASUS TUF Gaming A15 …"
+  let req = supabaseAdmin.from('products').select('id, name, sku')
+  for (const word of q.split(/\s+/)) {
+    req = req.or(`name.ilike.%${word}%,sku.ilike.%${word}%`)
+  }
+  const { data, error } = await req.order('name').limit(20)
+
+  if (error) {
+    console.error('Product search error:', error)
+    return []
+  }
+  return data ?? []
+}
+
 export async function deletePage(id: number) {
+  await requireAdmin()
   const { error } = await supabaseAdmin.from('cms_pages').delete().eq('id', id)
   revalidatePath('/admin/cms')
   revalidatePath('/')
@@ -54,6 +98,7 @@ export async function deletePage(id: number) {
 }
 
 export async function togglePageStatus(id: number, currentStatus: string) {
+  await requireAdmin()
   const next = currentStatus === 'published' ? 'draft' : 'published'
   const { error } = await supabaseAdmin
     .from('cms_pages')
@@ -148,6 +193,12 @@ function parseContent(type: CmsSectionType, formData: FormData): Record<string, 
         subtitle:     get('c_subtitle'),
         queryType:    get('c_queryType'),
         categorySlug: get('c_categorySlug'),
+        // Keep only numeric ids: "12, 7,x,3" -> "12,7,3"
+        productIds:   (get('c_productIds') ?? '')
+                        .split(',')
+                        .map((s) => s.trim())
+                        .filter((s) => /^\d+$/.test(s))
+                        .join(','),
         limit:        get('c_limit'),
         viewAllUrl:   get('c_viewAllUrl'),
         viewAllLabel: get('c_viewAllLabel'),
@@ -158,6 +209,7 @@ function parseContent(type: CmsSectionType, formData: FormData): Record<string, 
 }
 
 export async function createSection(_: unknown, formData: FormData) {
+  await requireAdmin()
   const page_id = parseInt(formData.get('page_id') as string)
   const type = formData.get('type') as CmsSectionType
 
@@ -188,6 +240,7 @@ export async function createSection(_: unknown, formData: FormData) {
 }
 
 export async function updateSection(_: unknown, formData: FormData) {
+  await requireAdmin()
   const id      = parseInt(formData.get('id') as string)
   const page_id = parseInt(formData.get('page_id') as string)
   const type    = formData.get('type') as CmsSectionType
@@ -208,6 +261,7 @@ export async function updateSection(_: unknown, formData: FormData) {
 }
 
 export async function deleteSection(id: number, pageId: number) {
+  await requireAdmin()
   const { error } = await supabaseAdmin.from('cms_sections').delete().eq('id', id)
   revalidatePath(`/admin/cms/${pageId}`)
   revalidatePath('/')
@@ -216,6 +270,7 @@ export async function deleteSection(id: number, pageId: number) {
 }
 
 export async function toggleSectionVisible(id: number, current: boolean, pageId: number) {
+  await requireAdmin()
   const { error } = await supabaseAdmin.from('cms_sections').update({ visible: !current }).eq('id', id)
   revalidatePath(`/admin/cms/${pageId}`)
   revalidatePath('/')
@@ -223,6 +278,7 @@ export async function toggleSectionVisible(id: number, current: boolean, pageId:
 }
 
 export async function moveSection(id: number, direction: 'up' | 'down', pageId: number) {
+  await requireAdmin()
   const { data: sections } = await supabaseAdmin
     .from('cms_sections')
     .select('id, order_index')
@@ -250,6 +306,7 @@ export async function moveSection(id: number, direction: 'up' | 'down', pageId: 
 // ── GLOBAL SETTINGS ──────────────────────────────────────────
 
 export async function updateGlobalSettings(_: unknown, formData: FormData) {
+  await requireAdmin()
   const get = (k: string) => (formData.get(k) as string) || ''
 
   const value = {

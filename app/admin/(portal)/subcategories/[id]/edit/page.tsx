@@ -1,19 +1,20 @@
-'use client'
-
-import { useActionState } from 'react'
 import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { updateSubcategory } from '../../actions'
-
-const inputCls = 'w-full px-3 py-2.5 border border-[#e5e8ec] rounded-lg text-sm outline-none focus:border-[#041e42]'
-const labelCls = 'block text-sm font-medium text-[#021523] mb-1.5'
+import SubcategoryForm from '../../SubcategoryForm'
 
 interface Props { params: Promise<{ id: string }> }
 
 export default async function EditSubcategoryPage({ params }: Props) {
   const { id } = await params
-  const { data: s, error } = await supabaseAdmin.from('subcategories').select('*').eq('id', parseInt(id)).maybeSingle()
+  const subId = parseInt(id)
+
+  const [{ data: s, error }, { data: categories, error: catError }] = await Promise.all([
+    supabaseAdmin.from('subcategories').select('id, name, slug, category_id').eq('id', subId).maybeSingle(),
+    supabaseAdmin.from('categories').select('id, name').order('name'),
+  ])
   if (error) console.error('Subcategory fetch error:', error)
+  if (catError) console.error('Categories fetch error:', catError)
   if (!s) notFound()
 
   return (
@@ -26,40 +27,8 @@ export default async function EditSubcategoryPage({ params }: Props) {
         <p className="text-sm text-[#818ea0] mt-0.5">{s.name}</p>
       </div>
       <div className="bg-white rounded-xl border border-[#e5e8ec] p-6 max-w-lg">
-        <EditSubcategoryForm subcategory={s} />
+        <SubcategoryForm action={updateSubcategory} categories={categories ?? []} subcategory={s} />
       </div>
     </div>
-  )
-}
-
-function EditSubcategoryForm({ subcategory }: { subcategory: any }) {
-  const [state, action, pending] = useActionState(updateSubcategory, null)
-
-  return (
-    <form action={action} className="space-y-4">
-      <input type="hidden" name="id" value={subcategory.id} />
-      {state?.error && <div className="text-sm text-[#ef262c] bg-red-50 border border-red-100 rounded-lg px-4 py-3">{state.error}</div>}
-      <div>
-        <label className={labelCls}>Name *</label>
-        <input type="text" name="name" defaultValue={subcategory.name} required className={inputCls} />
-      </div>
-      <div>
-        <label className={labelCls}>Slug *</label>
-        <input type="text" name="slug" defaultValue={subcategory.slug} required className={inputCls} />
-      </div>
-      <div>
-        <label className={labelCls}>Category ID *</label>
-        <input type="number" name="category_id" defaultValue={subcategory.category_id} required className={inputCls} />
-      </div>
-      <div className="flex gap-3 pt-2">
-        <button type="submit" disabled={pending}
-          className="bg-[#041e42] hover:bg-[#0a3060] disabled:bg-[#c8cdd5] text-white font-bold px-6 py-2.5 rounded-lg text-sm transition-colors">
-          {pending ? 'Saving…' : 'Update Subcategory'}
-        </button>
-        <a href="/admin/subcategories" className="text-sm text-[#818ea0] border border-[#e5e8ec] px-5 py-2.5 rounded-lg hover:border-[#041e42] transition-colors">
-          Cancel
-        </a>
-      </div>
-    </form>
   )
 }

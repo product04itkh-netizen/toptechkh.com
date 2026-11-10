@@ -136,7 +136,7 @@ async function ShopContent({ searchParams }: { searchParams: Awaited<ShopPagePro
         <div className="text-center py-16">
           <div className="text-5xl mb-4">🔍</div>
           <h2 className="text-xl font-bold text-[#021523] mb-2">No products found</h2>
-          <p className="text-[#818ea0]">Try adjusting your filters or search terms.</p>
+          <p className="text-[#5d6b7b]">Try adjusting your filters or search terms.</p>
         </div>
       ) : (
         <>
@@ -253,7 +253,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   if (isCategoryLanding && categoryLandingData) {
     return (
       <div className="max-w-[1290px] mx-auto px-4 py-6">
-        <div className="text-xs text-[#818ea0] mb-4">
+        <div className="text-xs text-[#5d6b7b] mb-4">
           <a href="/" className="hover:text-[#041e42]">Home</a>{' / '}
           <a href="/shop" className="hover:text-[#041e42]">Shop</a>{' / '}
           <span className="text-[#021523]">{categoryLandingData.category.name}</span>
@@ -275,7 +275,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
   return (
     <div className="max-w-[1290px] mx-auto px-4 py-6">
-      <div className="text-xs text-[#818ea0] mb-4">
+      <div className="text-xs text-[#5d6b7b] mb-4">
         <a href="/" className="hover:text-[#041e42]">Home</a>{' / '}
         <span className="text-[#021523]">Shop</span>
       </div>

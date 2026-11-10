@@ -192,7 +192,7 @@ export default function Header() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search products..."
-            className="flex-1 px-3 text-sm outline-none text-[#021523] bg-white min-w-0"
+            className="flex-1 px-3 text-sm outline-none text-[#021523] placeholder:text-[#5d6b7b] bg-white min-w-0"
           />
           <button
             type="submit"
@@ -298,7 +298,7 @@ export default function Header() {
                 <Link
                   key={item.id}
                   href={item.url || '/shop?sale=true'}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#ef262c] font-bold whitespace-nowrap bg-[#fff0f0] hover:bg-[#ef262c] hover:text-white border border-[#fccdd0] hover:border-[#ef262c] rounded-full transition-all duration-150"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-[#c81e25] font-bold whitespace-nowrap bg-[#fff0f0] hover:bg-[#ef262c] hover:text-white border border-[#fccdd0] hover:border-[#ef262c] rounded-full transition-all duration-150"
                 >
                   <Tag size={12} />
                   {item.label}
@@ -373,7 +373,7 @@ export default function Header() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search products..."
-                className="flex-1 px-3 text-sm outline-none"
+                className="flex-1 px-3 text-sm outline-none placeholder:text-[#5d6b7b]"
               />
               <button type="submit" className="bg-[#041e42] px-3 text-white">
                 <Search size={15} />
@@ -408,7 +408,7 @@ export default function Header() {
                           activeCategory === cat.slug ? 'text-[#041e42]' : 'text-[#021523]'
                         }`}
                       >
-                        <Icon size={15} className="text-[#818ea0]" />
+                        <Icon size={15} className="text-[#5d6b7b]" />
                         {cat.name}
                       </Link>
                       {catSubs.length > 0 && (
@@ -417,7 +417,7 @@ export default function Header() {
                             <Link
                               key={sub.slug}
                               href={`/shop?category=${cat.slug}&subcategory=${sub.slug}`}
-                              className="block py-2 px-2 text-xs font-medium text-[#818ea0] hover:text-[#041e42] transition-colors border-b border-[#f2f3f5] last:border-0"
+                              className="block py-2 px-2 text-xs font-medium text-[#5d6b7b] hover:text-[#041e42] transition-colors border-b border-[#f2f3f5] last:border-0"
                             >
                               {sub.name}
                             </Link>
@@ -446,7 +446,7 @@ export default function Header() {
                     <li key={item.id}>
                       <Link
                         href={item.url || '/shop?sale=true'}
-                        className="flex items-center gap-3 py-2.5 px-2 text-sm text-[#ef262c] font-bold"
+                        className="flex items-center gap-3 py-2.5 px-2 text-sm text-[#c81e25] font-bold"
                       >
                         <Tag size={15} /> {item.label}
                       </Link>
@@ -460,7 +460,7 @@ export default function Header() {
               {/* Brands section */}
               {brands.length > 0 && (
                 <li>
-                  <p className="px-2 pt-3 pb-1 text-[10px] font-bold text-[#818ea0] uppercase tracking-wider">Brands</p>
+                  <p className="px-2 pt-3 pb-1 text-[11px] font-bold text-[#5d6b7b] uppercase tracking-wider">Brands</p>
                   <div className="grid grid-cols-2 gap-x-2">
                     {brands.map((brand) => (
                       <Link

@@ -22,7 +22,7 @@ export default async function CmsPageEditorPage({ params }: Props) {
 
   const p = page as CmsPage
   const list: CmsSection[] = sections ?? []
-  const frontendUrl = p.slug === 'home' ? '/' : `/pages/${p.slug}`
+  const frontendUrl = p.slug === 'home' ? '/' : `/pages/${encodeURIComponent(p.slug)}`
 
   return (
     <div className="p-6 max-w-4xl">
@@ -48,6 +48,12 @@ export default async function CmsPageEditorPage({ params }: Props) {
             >
               View page <ExternalLink size={11} />
             </a>
+            <Link
+              href={`/admin/cms/${id}/edit`}
+              className="text-xs text-[#818ea0] hover:text-[#041e42] flex items-center gap-1 transition-colors"
+            >
+              <Pencil size={11} /> Edit page
+            </Link>
           </div>
         </div>
         <Link

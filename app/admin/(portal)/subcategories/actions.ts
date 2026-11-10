@@ -4,8 +4,11 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { subcategorySchema } from '@/lib/validation'
+import { requireAdmin } from '@/lib/admin-session'
+import { rethrowFrameworkError } from '@/lib/action-errors'
 
 export async function createSubcategory(_: unknown, formData: FormData) {
+  await requireAdmin()
   try {
     const data = {
       name: formData.get('name') as string,
@@ -19,12 +22,14 @@ export async function createSubcategory(_: unknown, formData: FormData) {
     revalidatePath('/shop')
     redirect('/admin/subcategories?toast=success&msg=Subcategory+created')
   } catch (e) {
+    rethrowFrameworkError(e)
     const msg = e instanceof Error ? e.message : 'Subcategory validation failed'
     return { error: msg }
   }
 }
 
 export async function updateSubcategory(_: unknown, formData: FormData) {
+  await requireAdmin()
   try {
     const id = parseInt(formData.get('id') as string)
     if (isNaN(id)) throw new Error('Invalid subcategory ID')
@@ -40,12 +45,14 @@ export async function updateSubcategory(_: unknown, formData: FormData) {
     revalidatePath('/shop')
     redirect('/admin/subcategories?toast=success&msg=Subcategory+updated')
   } catch (e) {
+    rethrowFrameworkError(e)
     const msg = e instanceof Error ? e.message : 'Subcategory validation failed'
     return { error: msg }
   }
 }
 
 export async function deleteSubcategory(id: number) {
+  await requireAdmin()
   const { error } = await supabaseAdmin.from('subcategories').delete().eq('id', id)
   revalidatePath('/admin/subcategories')
   revalidatePath('/shop')

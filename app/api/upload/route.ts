@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { ADMIN_COOKIE, verifyAdminToken } from '@/lib/admin-auth'
 
 const BUCKET = 'product-images'
 const MAX_BYTES = (parseInt(process.env.NEXT_PUBLIC_MAX_FILE_SIZE_MB || '5')) * 1024 * 1024
@@ -14,6 +15,11 @@ async function isValidImageMagic(buffer: Buffer): Promise<boolean> {
 }
 
 export async function POST(request: NextRequest) {
+  // Only signed-in admins may write to the public bucket
+  if (!(await verifyAdminToken(request.cookies.get(ADMIN_COOKIE)?.value))) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const formData = await request.formData()
   const file = formData.get('file')
 

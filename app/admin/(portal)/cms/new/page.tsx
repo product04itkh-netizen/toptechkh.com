@@ -42,7 +42,7 @@ export default function NewCmsPagePage() {
             <label className={labelCls}>
               Slug *{' '}
               <span className="text-[#818ea0] font-normal text-xs">
-                (URL path — e.g. &quot;about-us&quot; → /pages/about-us)
+                (URL path — e.g. &quot;about-us&quot; → /pages/about-us; spaces and capitals are converted automatically)
               </span>
             </label>
             <input
@@ -50,8 +50,6 @@ export default function NewCmsPagePage() {
               name="slug"
               placeholder="about-us"
               required
-              pattern="[a-z0-9-]+"
-              title="Lowercase letters, numbers, hyphens only"
               className={inputCls}
             />
           </div>

@@ -90,7 +90,7 @@ export default function FilterSidebar({
           <button onClick={() => setCollapsed(false)} title="Show Filters"
             className="flex flex-col items-center gap-2 px-2 py-3 bg-[var(--cms-color-primary)] text-white rounded-xl shadow-lg hover:bg-[var(--cms-color-primary-hover)] hover:shadow-xl active:scale-95 transition-all duration-200 group">
             <SlidersHorizontal size={15} className="flex-shrink-0" />
-            <span className="text-[8px] font-black uppercase tracking-widest [writing-mode:vertical-lr] rotate-180 leading-none">Filters</span>
+            <span className="text-[11px] font-black uppercase tracking-widest [writing-mode:vertical-lr] rotate-180 leading-none">Filters</span>
             <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
               <ChevronRight size={11} />
             </div>
@@ -110,11 +110,11 @@ export default function FilterSidebar({
         </div>
         <div className="flex items-center gap-2">
           {hasFilters && <button onClick={clearAll} className="text-xs text-[var(--cms-color-accent)] hover:underline">Clear all</button>}
-          {onClose && <button onClick={onClose} className="text-[#818ea0] hover:text-[#021523] lg:hidden"><X size={18} /></button>}
+          {onClose && <button onClick={onClose} className="text-[#5d6b7b] hover:text-[#021523] lg:hidden"><X size={18} /></button>}
         </div>
       </div>
       <button onClick={() => setCollapsed(true)}
-        className="w-full flex items-center justify-center gap-1.5 mb-4 py-1.5 rounded-md text-xs font-semibold text-[#818ea0] border border-dashed border-[#d1d9e0] hover:bg-[var(--cms-color-primary)] hover:text-white hover:border-[var(--cms-color-primary)] transition-all duration-200 group">
+        className="w-full flex items-center justify-center gap-1.5 mb-4 py-1.5 rounded-md text-xs font-semibold text-[#5d6b7b] border border-dashed border-[#d1d9e0] hover:bg-[var(--cms-color-primary)] hover:text-white hover:border-[var(--cms-color-primary)] transition-all duration-200 group">
         <ChevronLeft size={13} className="group-hover:-translate-x-0.5 transition-transform" />
         Hide Filters
       </button>
@@ -122,7 +122,7 @@ export default function FilterSidebar({
       {/* Category */}
       {categories.length > 0 && (
         <div className="mb-4">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-[#818ea0] mb-3">Category</h4>
+          <h4 className="text-xs font-bold uppercase tracking-wider text-[#5d6b7b] mb-3">Category</h4>
           <ul className="space-y-1">
             {categories.map(opt => (
               <li key={opt.slug}>
@@ -141,7 +141,7 @@ export default function FilterSidebar({
       {/* Subcategory */}
       {currentCategory && visibleSubcats.length > 0 && (
         <div className="mb-4 ml-2 pl-3 border-l-2 border-[#e5e8ec]">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-[#818ea0] mb-2">Subcategory</h4>
+          <h4 className="text-xs font-bold uppercase tracking-wider text-[#5d6b7b] mb-2">Subcategory</h4>
           <ul className="space-y-1">
             {visibleSubcats.map(opt => (
               <li key={opt.slug}>
@@ -160,7 +160,7 @@ export default function FilterSidebar({
       {/* Sub-subcategory */}
       {currentSubcat && visibleSubSubs.length > 0 && (
         <div className="mb-4 ml-4 pl-3 border-l-2 border-[#e5e8ec]">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-[#818ea0] mb-2">Type</h4>
+          <h4 className="text-xs font-bold uppercase tracking-wider text-[#5d6b7b] mb-2">Type</h4>
           <ul className="space-y-1">
             {visibleSubSubs.map(opt => (
               <li key={opt.slug}>
@@ -179,7 +179,7 @@ export default function FilterSidebar({
       {/* Brand */}
       {brands.length > 0 && (
         <div className="mb-4">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-[#818ea0] mb-3">Brand</h4>
+          <h4 className="text-xs font-bold uppercase tracking-wider text-[#5d6b7b] mb-3">Brand</h4>
           <ul className="space-y-1">
             {(showAllBrands ? brands : brands.slice(0, 10)).map(opt => (
               <li key={opt.slug}>
@@ -203,7 +203,7 @@ export default function FilterSidebar({
       {/* Series */}
       {currentBrand && visibleSeries.length > 0 && (
         <div className="mb-4 ml-2 pl-3 border-l-2 border-[#e5e8ec]">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-[#818ea0] mb-2">Series</h4>
+          <h4 className="text-xs font-bold uppercase tracking-wider text-[#5d6b7b] mb-2">Series</h4>
           <ul className="space-y-1">
             {visibleSeries.map(opt => (
               <li key={opt.slug}>
@@ -221,7 +221,7 @@ export default function FilterSidebar({
 
       {/* Price */}
       <div className="mb-4">
-        <h4 className="text-xs font-bold uppercase tracking-wider text-[#818ea0] mb-3">Price Range</h4>
+        <h4 className="text-xs font-bold uppercase tracking-wider text-[#5d6b7b] mb-3">Price Range</h4>
         <ul className="space-y-1">
           {priceRanges.map(range => {
             const isActive = currentMinPrice === String(range.min) && currentMaxPrice === String(range.max)

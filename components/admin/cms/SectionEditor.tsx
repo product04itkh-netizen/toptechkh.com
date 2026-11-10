@@ -3,6 +3,8 @@
 import { useActionState, useState } from 'react'
 import dynamic from 'next/dynamic'
 import TypographyPanel from './TypographyPanel'
+import ProductPicker, { type PickedProduct } from './ProductPicker'
+import { slugify } from '@/lib/slug'
 import type { CmsSectionType, CmsSectionStyles } from '@/lib/cms-types'
 import { SECTION_TYPE_LABELS } from '@/lib/cms-types'
 
@@ -14,6 +16,11 @@ const hintCls  = 'text-xs text-[#818ea0] font-normal ml-1'
 
 type ActionFn = (prev: unknown, formData: FormData) => Promise<unknown>
 
+export interface CategoryOption {
+  slug: string
+  name: string
+}
+
 interface Props {
   action: ActionFn
   pageId: number
@@ -22,9 +29,14 @@ interface Props {
   content?: Record<string, string>
   styles?: CmsSectionStyles
   mode: 'new' | 'edit'
+  categories?: CategoryOption[]
+  selectedProducts?: PickedProduct[]
 }
 
-export default function SectionEditor({ action, pageId, sectionId, type: defaultType, content = {}, styles = {}, mode }: Props) {
+export default function SectionEditor({
+  action, pageId, sectionId, type: defaultType, content = {}, styles = {}, mode,
+  categories = [], selectedProducts = [],
+}: Props) {
   const [state, formAction, pending] = useActionState(action, null)
   const [type, setType] = useState<CmsSectionType>(defaultType ?? 'hero')
 
@@ -79,7 +91,9 @@ export default function SectionEditor({ action, pageId, sectionId, type: default
           {type === 'image' && <ImageFields content={content} />}
           {type === 'cta' && <CtaFields content={content} />}
           {type === 'spacer' && <SpacerFields content={content} />}
-          {type === 'product_grid' && <ProductGridFields content={content} />}
+          {type === 'product_grid' && (
+            <ProductGridFields content={content} categories={categories} selectedProducts={selectedProducts} />
+          )}
         </div>
       </div>
 
@@ -246,27 +260,75 @@ function SpacerFields({ content: c }: { content: Record<string, string> }) {
   )
 }
 
-function ProductGridFields({ content: c }: { content: Record<string, string> }) {
+function ProductGridFields({
+  content: c, categories, selectedProducts,
+}: {
+  content: Record<string, string>
+  categories: CategoryOption[]
+  selectedProducts: PickedProduct[]
+}) {
+  const [queryType, setQueryType] = useState<string>(c.queryType ?? 'featured')
+  const [picked, setPicked] = useState<PickedProduct[]>(selectedProducts)
+
+  // Keep a saved category slug selectable even if that category was since renamed or removed
+  const savedSlug = slugify(c.categorySlug ?? '')
+  const categoryOptions = savedSlug && !categories.some((cat) => cat.slug === savedSlug)
+    ? [...categories, { slug: savedSlug, name: `${savedSlug} (missing)` }]
+    : categories
+
   return (
     <>
       <Field label="Section Title" name="c_title" defaultValue={c.title} placeholder="Featured Products" />
       <Field label="Badge" name="c_badge" defaultValue={c.badge} placeholder="Featured" hint="optional small badge chip" />
       <Field label="Subtitle" name="c_subtitle" defaultValue={c.subtitle} placeholder="Browse our curated selection" hint="optional" />
+
       <div>
         <label className={labelCls}>Query Type *</label>
-        <select name="c_queryType" defaultValue={c.queryType ?? 'featured'} className={inputCls}>
+        <select
+          name="c_queryType"
+          value={queryType}
+          onChange={(e) => setQueryType(e.target.value)}
+          className={inputCls}
+        >
           <option value="featured">Featured Products</option>
           <option value="coming_soon">Coming Soon</option>
           <option value="on_sale">On Sale</option>
           <option value="new_arrivals">New Arrivals</option>
           <option value="category">By Category</option>
+          <option value="products">Specific Products (search by name or model)</option>
         </select>
       </div>
-      {c.queryType === 'category' && (
-        <Field label="Category Slug" name="c_categorySlug" defaultValue={c.categorySlug} placeholder="laptops" hint="only used for 'By Category' query type" />
+
+      {queryType === 'category' && (
+        <div>
+          <label className={labelCls}>Category *</label>
+          <select name="c_categorySlug" defaultValue={savedSlug} required className={inputCls}>
+            <option value="" disabled>Select a category…</option>
+            {categoryOptions.map((cat) => (
+              <option key={cat.slug} value={cat.slug}>{cat.name}</option>
+            ))}
+          </select>
+        </div>
       )}
+
+      {queryType === 'products' && (
+        <div>
+          <label className={labelCls}>
+            Products *
+            <span className={hintCls}>— shown in the order listed</span>
+          </label>
+          <ProductPicker selected={picked} onChange={setPicked} />
+        </div>
+      )}
+      {/* Always submitted; empty unless "Specific Products" is selected */}
+      <input
+        type="hidden"
+        name="c_productIds"
+        value={queryType === 'products' ? picked.map((p) => p.id).join(',') : ''}
+      />
+
       <Row>
-        <Field label="Product Limit" name="c_limit" defaultValue={c.limit ?? '8'} placeholder="8" hint="max 24" />
+        <Field label="Product Limit" name="c_limit" defaultValue={c.limit ?? '8'} placeholder="8" hint="max 24; ignored for Specific Products" />
         <Field label="View All URL" name="c_viewAllUrl" defaultValue={c.viewAllUrl} placeholder="/shop" hint="optional" />
       </Row>
       <Field label="View All Label" name="c_viewAllLabel" defaultValue={c.viewAllLabel} placeholder="View All →" hint="optional" />

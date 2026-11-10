@@ -4,8 +4,11 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { seriesSchema } from '@/lib/validation'
+import { requireAdmin } from '@/lib/admin-session'
+import { rethrowFrameworkError } from '@/lib/action-errors'
 
 export async function createSeries(_: unknown, formData: FormData) {
+  await requireAdmin()
   try {
     const data = {
       name: formData.get('name') as string,
@@ -19,12 +22,14 @@ export async function createSeries(_: unknown, formData: FormData) {
     revalidatePath('/shop')
     redirect('/admin/series?toast=success&msg=Series+created')
   } catch (e) {
+    rethrowFrameworkError(e)
     const msg = e instanceof Error ? e.message : 'Series validation failed'
     return { error: msg }
   }
 }
 
 export async function updateSeries(_: unknown, formData: FormData) {
+  await requireAdmin()
   try {
     const id = parseInt(formData.get('id') as string)
     if (isNaN(id)) throw new Error('Invalid series ID')
@@ -40,12 +45,14 @@ export async function updateSeries(_: unknown, formData: FormData) {
     revalidatePath('/shop')
     redirect('/admin/series?toast=success&msg=Series+updated')
   } catch (e) {
+    rethrowFrameworkError(e)
     const msg = e instanceof Error ? e.message : 'Series validation failed'
     return { error: msg }
   }
 }
 
 export async function deleteSeries(id: number) {
+  await requireAdmin()
   const { error } = await supabaseAdmin.from('series').delete().eq('id', id)
   revalidatePath('/admin/series')
   revalidatePath('/shop')

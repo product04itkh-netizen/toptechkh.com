@@ -29,13 +29,13 @@ export default function SortBar({ total, onFilterClick }: SortBarProps) {
         >
           <SlidersHorizontal size={14} /> Filters
         </button>
-        <span className="text-sm text-[#818ea0]">
+        <span className="text-sm text-[#5d6b7b]">
           <span className="font-semibold text-[#021523]">{total}</span> products found
         </span>
       </div>
 
       <div className="flex items-center gap-2">
-        <span className="text-xs text-[#818ea0] hidden sm:block">Sort by:</span>
+        <span className="text-xs text-[#5d6b7b] hidden sm:block">Sort by:</span>
         <select
           value={currentSort}
           onChange={(e) => handleSort(e.target.value)}

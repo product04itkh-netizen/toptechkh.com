@@ -3,8 +3,11 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { requireAdmin } from '@/lib/admin-session'
+import { rethrowFrameworkError } from '@/lib/action-errors'
 
 export async function addBanner(_: unknown, formData: FormData) {
+  await requireAdmin()
   const image_url = (formData.get('image_url') as string)?.split('\n')[0]?.trim()
   const link_url = (formData.get('link_url') as string)?.trim() || '/shop'
 
@@ -29,6 +32,7 @@ export async function addBanner(_: unknown, formData: FormData) {
 }
 
 export async function deleteBanner(id: number) {
+  await requireAdmin()
   const { error } = await supabaseAdmin.from('banners').delete().eq('id', id)
   revalidatePath('/')
   revalidatePath('/admin/banners')
@@ -37,6 +41,7 @@ export async function deleteBanner(id: number) {
 }
 
 export async function moveBanner(id: number, direction: 'up' | 'down') {
+  await requireAdmin()
   const { data: all } = await supabaseAdmin
     .from('banners')
     .select('id, sort_order')
@@ -61,6 +66,7 @@ export async function moveBanner(id: number, direction: 'up' | 'down') {
 }
 
 export async function toggleBannerActive(id: number, active: boolean) {
+  await requireAdmin()
   const { error } = await supabaseAdmin.from('banners').update({ active }).eq('id', id)
   revalidatePath('/')
   revalidatePath('/admin/banners')
@@ -68,6 +74,7 @@ export async function toggleBannerActive(id: number, active: boolean) {
 }
 
 export async function updateBannerLink(id: number, link_url: string) {
+  await requireAdmin()
   const { error } = await supabaseAdmin.from('banners').update({ link_url }).eq('id', id)
   revalidatePath('/')
   revalidatePath('/admin/banners')

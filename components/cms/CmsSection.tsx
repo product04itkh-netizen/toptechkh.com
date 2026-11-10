@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { sanitizeHtml } from '@/lib/sanitize'
+import { slugify } from '@/lib/slug'
 import ProductCard from '@/components/product/ProductCard'
 import type { Product } from '@/lib/types'
 
@@ -58,7 +59,7 @@ function HeroBlock({ content: c, styles: s, containerStyle }: { content: HeroCon
   return (
     <section
       className="relative overflow-hidden"
-      style={{ backgroundColor: bg, ...containerStyle, paddingTop: undefined, paddingBottom: undefined }}
+      style={{ ...containerStyle, backgroundColor: bg, paddingTop: undefined, paddingBottom: undefined }}
     >
       {/* Background image */}
       {c.backgroundImage && (
@@ -183,7 +184,7 @@ function BannerBlock({ content: c, styles: s, containerStyle }: { content: Banne
     </div>
   )
 
-  const bannerBg = c.backgroundColor ?? '#f2f3f5'
+  const bannerBg = c.backgroundColor ?? (c.imageUrl ? '#f2f3f5' : '#041e42')
   return (
     <section className="py-10" style={{ ...containerStyle, backgroundColor: containerStyle.backgroundColor ?? bannerBg }}>
       <div className="max-w-[1290px] mx-auto px-4">
@@ -208,7 +209,7 @@ function HeadingBlock({ content: c, styles: s, containerStyle }: { content: Head
         {tag === 'h3' && <h3 className="text-xl font-black" style={headingStyle}>{c.text}</h3>}
         {tag === 'h4' && <h4 className="text-lg font-bold" style={headingStyle}>{c.text}</h4>}
         {c.subtext && (
-          <p className="text-sm text-[#818ea0] mt-1" style={{ color: undefined, ...textStyle, fontSize: undefined }}>
+          <p className="text-sm text-[#5d6b7b] mt-1" style={{ color: undefined, ...textStyle, fontSize: undefined }}>
             {c.subtext}
           </p>
         )}
@@ -241,7 +242,7 @@ function ImageBlock({ content: c, styles: s, containerStyle }: { content: ImageC
         <Image src={c.imageUrl} alt={c.altText ?? ''} fill className="object-cover" />
       </div>
       {c.caption && (
-        <figcaption className="text-xs text-[#818ea0] mt-2 text-center">{c.caption}</figcaption>
+        <figcaption className="text-xs text-[#5d6b7b] mt-2 text-center">{c.caption}</figcaption>
       )}
     </figure>
   )
@@ -308,22 +309,38 @@ async function ProductGridBlock({ content: c, styles: s, containerStyle }: {
     .from('products')
     .select('*, category:categories(id,name,slug), brand:brands(id,name,slug)')
 
+  // Manually picked products, in the admin-defined order (max 24)
+  const manualIds = c.queryType === 'products'
+    ? (c.productIds ?? '')
+        .split(',')
+        .map((v) => parseInt(v))
+        .filter((n) => Number.isInteger(n) && n > 0)
+        .slice(0, 24)
+    : null
+
   switch (c.queryType) {
+    case 'products':
+      if (!manualIds || manualIds.length === 0) return null
+      query = query.in('id', manualIds)
+      break
     case 'coming_soon':
       query = query.eq('coming_soon', true)
       break
     case 'on_sale':
       query = query.not('sale_price', 'is', null).eq('stock_status', 'instock')
       break
-    case 'category':
-      if (c.categorySlug) {
-        const { data: cat, error } = await supabase
-          .from('categories').select('id').eq('slug', c.categorySlug).maybeSingle()
-        if (error) console.error('Category lookup error:', error)
-        if (cat) query = query.eq('category_id', cat.id).eq('stock_status', 'instock')
-      }
-      query = query.eq('stock_status', 'instock')
+    case 'category': {
+      // An unknown or missing category shows nothing, never the whole catalogue
+      // Slugs saved before normalisation may differ in case ("Gaming" vs "gaming")
+      const catSlug = slugify(c.categorySlug ?? '')
+      if (!catSlug) return null
+      const { data: cat, error } = await supabase
+        .from('categories').select('id').eq('slug', catSlug).maybeSingle()
+      if (error) console.error('Category lookup error:', error)
+      if (!cat) return null
+      query = query.eq('category_id', cat.id).eq('stock_status', 'instock')
       break
+    }
     case 'new_arrivals':
       query = query.eq('stock_status', 'instock').order('created_at', { ascending: false })
       break
@@ -335,8 +352,13 @@ async function ProductGridBlock({ content: c, styles: s, containerStyle }: {
       query = query.eq('stock_status', 'instock').order('created_at', { ascending: false })
   }
 
-  const { data } = await query.limit(limit)
+  const { data } = await query.limit(manualIds ? manualIds.length : limit)
   const products: Product[] = (data ?? []) as Product[]
+
+  if (manualIds) {
+    // .in() does not preserve order, so sort back into the admin-defined sequence
+    products.sort((a, b) => manualIds.indexOf(a.id) - manualIds.indexOf(b.id))
+  }
 
   if (products.length === 0) return null
 
@@ -366,7 +388,7 @@ async function ProductGridBlock({ content: c, styles: s, containerStyle }: {
               </h2>
             )}
             {c.subtitle && (
-              <p className="text-sm text-[#818ea0] mt-1">{c.subtitle}</p>
+              <p className="text-sm text-[#5d6b7b] mt-1">{c.subtitle}</p>
             )}
           </div>
           <Link

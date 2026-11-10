@@ -40,7 +40,7 @@ export default async function BrandStrip() {
     <section className="py-8 border-y border-[#e5e8ec]">
       <div className="max-w-[1290px] mx-auto px-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-bold text-[#818ea0] uppercase tracking-wider">Top Brands</h3>
+          <h3 className="text-sm font-bold text-[#5d6b7b] uppercase tracking-wider">Top Brands</h3>
           <Link href="/shop" className="text-xs text-[#0070dc] hover:text-[var(--cms-color-primary)]">
             View all brands →
           </Link>

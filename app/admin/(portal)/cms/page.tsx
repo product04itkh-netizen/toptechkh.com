@@ -96,7 +96,7 @@ export default async function CmsPagesListPage() {
       ) : (
         <div className="space-y-3">
           {list.map((page) => {
-            const frontendUrl = page.slug === 'home' ? '/' : `/pages/${page.slug}`
+            const frontendUrl = page.slug === 'home' ? '/' : `/pages/${encodeURIComponent(page.slug)}`
             const visibleSections  = page.sections.filter(s => s.visible)
             const hiddenSections   = page.sections.filter(s => !s.visible)
 

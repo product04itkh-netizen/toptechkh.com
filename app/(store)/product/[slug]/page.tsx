@@ -52,7 +52,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <div className="max-w-[1290px] mx-auto px-4 py-6">
-      <div className="text-xs text-[#818ea0] mb-6 flex items-center flex-wrap gap-x-1">
+      <div className="text-xs text-[#5d6b7b] mb-6 flex items-center flex-wrap gap-x-1">
         <a href="/" className="hover:text-[#041e42]">Home</a>
         {' / '}
         <a href="/shop" className="hover:text-[#041e42]">Shop</a>

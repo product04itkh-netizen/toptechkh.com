@@ -4,8 +4,11 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { categorySchema } from '@/lib/validation'
+import { requireAdmin } from '@/lib/admin-session'
+import { rethrowFrameworkError } from '@/lib/action-errors'
 
 export async function createCategory(_: unknown, formData: FormData) {
+  await requireAdmin()
   try {
     const data = {
       name: formData.get('name') as string,
@@ -54,12 +57,14 @@ export async function createCategory(_: unknown, formData: FormData) {
     revalidatePath('/shop')
     redirect('/admin/categories?toast=success&msg=Category+created')
   } catch (e) {
+    rethrowFrameworkError(e)
     const msg = e instanceof Error ? e.message : 'Category validation failed'
     return { error: msg }
   }
 }
 
 export async function updateCategory(_: unknown, formData: FormData) {
+  await requireAdmin()
   try {
     const id = parseInt(formData.get('id') as string)
     if (isNaN(id)) throw new Error('Invalid category ID')
@@ -165,11 +170,13 @@ export async function updateCategory(_: unknown, formData: FormData) {
     revalidatePath('/shop')
     redirect('/admin/categories?toast=success&msg=Category+updated')
   } catch (e) {
+    rethrowFrameworkError(e)
     return { error: e instanceof Error ? e.message : 'Validation failed' }
   }
 }
 
 export async function deleteCategory(id: number) {
+  await requireAdmin()
   try {
     // Remove from navigation_items first (with error check)
     const { error: navError } = await supabaseAdmin
@@ -190,12 +197,14 @@ export async function deleteCategory(id: number) {
     if (error) throw new Error(error.message)
     redirect('/admin/categories?toast=success&msg=Category+deleted')
   } catch (e) {
+    rethrowFrameworkError(e)
     const msg = e instanceof Error ? e.message : 'Failed to delete category'
     redirect(`/admin/categories?toast=error&msg=${encodeURIComponent(msg)}`)
   }
 }
 
 export async function toggleCategoryNav(id: number, current: boolean) {
+  await requireAdmin()
   try {
     // First, get the category name
     const { data: category, error: catError } = await supabaseAdmin
@@ -259,6 +268,7 @@ export async function toggleCategoryNav(id: number, current: boolean) {
     revalidatePath('/')
     revalidatePath('/shop')
   } catch (e) {
+    rethrowFrameworkError(e)
     const msg = e instanceof Error ? e.message : 'Failed to update category'
     redirect(`/admin/categories?toast=error&msg=${encodeURIComponent(msg)}`)
   }
